@@ -31,24 +31,23 @@ def load_from_file(path):
     return g
 
 
-def write_to_file(g, path):
+def write_solution_to_file(g, path):
     with open(path, 'w') as f:
         f.write("digraph G {\n")
         for node in g.get_nodes():
-            print(g.get_node_player(node))
-            to_write = str(node) + "[label=\"" + str(node) + " " + g.get_node_priority(node)+"\""
+            to_write = str(node) + "[label=\"" + str(node) + " " + g.get_node_priority(node) + "\""
             if g.get_node_player(node) == "1":
                 to_write += ",shape=circle"
             elif g.get_node_player(node) == "2":
-                to_write += ",shape=box"
+                to_write += ",shape=square"
             else:
                 pass
                 # error
 
-            if g.get_node_region(node) == "1":
-                to_write += ",color=blue"
-            elif g.get_node_region(node) == "2":
-                to_write += ",color=green"
+            if g.get_node_region(node) == 1:
+                to_write += ",color=blue3"
+            elif g.get_node_region(node) == 2:
+                to_write += ",color=forestgreen"
             else:
                 pass
                 # error
@@ -60,18 +59,40 @@ def write_to_file(g, path):
 
                 if succ == g.get_node_strategy(node):
                     if g.get_node_player(node) == "1":
-                        to_write += '[color=blue]\n'
+                        to_write += '[color=blue3]\n'
                     elif g.get_node_player(node) == "2":
-                        to_write += '[color=green]\n'
+                        to_write += '[color=forestgreen]\n'
                     else:
                         pass
-                        #error
+                        # error
                 else:
                     to_write += ";\n"
             f.write(to_write)
 
         f.write('}')
 
+
+def write_graph_to_file(g, path):
+    with open(path, 'w') as f:
+        f.write("digraph G {\n")
+        for node in g.get_nodes():
+            to_write = str(node) + "[label=\"" + str(node) + " " + g.get_node_priority(node) + "\""
+            if g.get_node_player(node) == "1":
+                to_write += ",shape=circle"
+            elif g.get_node_player(node) == "2":
+                to_write += ",shape=square"
+            else:
+                pass
+                # error
+
+            to_write += "];\n"
+
+            for succ in g.successors[node]:
+                to_write += str(node) + " -> " + str(succ) + ";\n"
+
+            f.write(to_write)
+
+        f.write('}')
 
 # def write_to_file2(self, path):
 #     with open(path, 'w') as f:
@@ -97,5 +118,5 @@ def write_to_file(g, path):
 
 
 
-#g = load_from_file("assets/reachability/fig32.txt")
-#write_to_file(g,"assets/trash/test3.dot")
+# g = load_from_file("assets/reachability/fig32.txt")
+# write_to_file(g,"assets/trash/test3.dot")
