@@ -17,8 +17,8 @@ class Graph(object):
         self.successors = defaultdict(list)
         self.nodes = defaultdict(tuple)
 
-        self.regions = defaultdict(lambda: -1)
-        self.strategies = defaultdict(list)
+        self.regions = defaultdict(int)
+        self.strategies = defaultdict(str)
 
     def get_nodes(self):
         return self.nodes.keys()
@@ -29,11 +29,23 @@ class Graph(object):
     def get_node_priority(self, node):
         return self.nodes[node][1]
 
+    def get_regions(self):
+        return self.regions
+
     def get_node_region(self, node):
         return self.regions[node]
 
+    def set_node_region(self, node, player):
+        self.regions[node] = player
+
     def get_node_strategy(self, node):
         return self.strategies[node]
+
+    def set_node_strategy(self, node, move):
+         self.strategies[node] = move
+
+    def get_strategies(self):
+        return self.strategies
 
     def add_node(self, node, info):
         self.nodes[node] = info
