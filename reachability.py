@@ -1,58 +1,50 @@
-graph = {1: [2, 3], 2: [3, 4, 5], 3: [5], 4: [6], 5: [4, 6], 6: [4, 5]}
-players = [0, 0, 1, 1, 0, 1]
+from collections import defaultdict
 
 
-def initOut(graph):
-    out = [0] * len(graph)
-    for node in graph:
-        for node2 in graph[node]:
-            out[node2 - 1] += 1
+def init_out(g):
+    out = defaultdict(int)
+    for node in g.get_nodes():
+        for pred in g.get_predecessors(node):
+            out[pred] += 1
     return out
 
 
-def reachabilitySolver(graph, players, U, j):
-    marq = [0] * len(graph)
-    strat = [0] * len(graph)
-    out = initOut(graph)
+def reachability_solver(g, U, j):
+    out = init_out(g)
     queue = []
+
+    opponent = opposite(j)
 
     for node in U:
         queue.append(node)
-        marq[node - 1] = 1
+        g.set_node_region(node, j)
+        g.set_node_strategy(node, g.get_successors(node)[0])
 
     while len(queue) != 0:
         s = queue[0]
         queue = queue[1:]
-        for sbis in graph[s]:
-            if marq[sbis - 1] == 0:
-                if players[sbis - 1] == j:
+        for sbis in g.get_predecessors(s):
+            if g.get_node_region(sbis) == 0:
+                if g.get_node_player(sbis) == str(j):
                     queue.append(sbis)
-                    marq[sbis - 1] = 1
-                    strat[sbis - 1] = s - 1
-                else:
-                    out[sbis - 1] -= 1
-                    if out[sbis - 1] == 0:
+                    g.set_node_region(sbis, j)
+                    g.set_node_strategy(sbis, s)
+                elif (g.get_node_player(sbis) == str(opponent)):
+                    out[sbis] -= 1
+                    if out[sbis] == 0:
                         queue.append(sbis)
-                        marq[sbis - 1] = 1
-                        strat[sbis - 1] = s - 1
+                        g.set_node_region(sbis, j)
 
-    for node in graph:
-        if marq[node - 1] == 0:
-            for predecessor in graph[node]:
-                if marq[predecessor - 1] == 0:
-                    strat[predecessor - 1] = node - 1
-
-    return marq, strat
+    for node in g.get_nodes():
+        if g.get_node_region(node) != 1:
+            g.set_node_region(node, opponent)
+            for predecessor in g.get_predecessors(node):
+                if g.get_node_region(predecessor) != 1:
+                    g.set_node_strategy(predecessor, node)
 
 
-res = reachabilitySolver(graph, players, [1], 0)
-
-
-def cleanStrat(strat):
-    t = []
-    for elem in strat:
-        t.append(elem + 1)
-    return t
-
-
-print(cleanStrat(res[1]))
+def opposite(j):
+    if j == 1:
+        return 2
+    else:
+        return 1

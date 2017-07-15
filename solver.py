@@ -35,7 +35,7 @@ def get_solver(args):
     :return: the corresponding solving function
     """
     if args.r:
-        return reachability.reachabilitySolver
+        return reachability.reachability_solver
     elif args.wp:
         return None  # placeholder for weak parity solver
     else:
