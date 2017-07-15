@@ -1,5 +1,6 @@
 import argparse
 import reachability as reachability
+import tools as tools
 
 
 def command_line_handler():
@@ -46,13 +47,7 @@ def solver():
     solver = get_solver(args)
 
     if args.mode == "solve":
-        try:
-            f = open(args.inputFile, 'r')
-        except IOError:
-            raise
-            # handle exception
-
-            # load file
+        graph = tools.load_from_file(args.inputFile)
 
     elif args.mode == "bench":
         iterations = args.n
