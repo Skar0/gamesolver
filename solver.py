@@ -35,7 +35,7 @@ def get_solver(args):
     :return: the corresponding solving function
     """
     if args.r:
-        return reachability.reachabilitySolver()
+        return reachability.reachabilitySolver
     elif args.wp:
         return None  # placeholder for weak parity solver
     else:
@@ -47,8 +47,10 @@ def solver():
     solver = get_solver(args)
 
     if args.mode == "solve":
-        graph = tools.load_from_file(args.inputFile)
-
+        g = tools.load_from_file(args.inputFile)
+        solver(g, ["v1"], 1)
+        tools.write_solution_to_file(g, "reach.dot")
+        tools.write_graph_to_file(g,"graph.dot")
     elif args.mode == "bench":
         iterations = args.n
         pass
