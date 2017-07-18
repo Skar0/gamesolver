@@ -17,8 +17,8 @@ class Graph(object):
         self.successors = defaultdict(list)
         self.nodes = defaultdict(tuple)
 
-        self.regions = defaultdict(int)
-        self.strategies = defaultdict(str)
+        self.regions = defaultdict(lambda: -1)
+        self.strategies = defaultdict(lambda: -1)
 
     def get_nodes(self):
         return self.nodes.keys()
