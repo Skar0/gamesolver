@@ -1,4 +1,7 @@
 import argparse
+import timeit
+
+from subprocess import call
 import reachability as reachability
 import tools as tools
 
@@ -48,9 +51,17 @@ def solver():
 
     if args.mode == "solve":
         g = tools.load_from_file(args.inputFile)
-        solver(g, ["v1"], 1)
-        tools.write_solution_to_file(g, "reach.dot")
-        tools.write_graph_to_file(g,"graph.dot")
+        solver(g, [1], 1)
+        tools.write_solution_to_file(g,args.outputFile+"_sol.dot")
+        tools.write_graph_to_file(g,args.outputFile+"_graph.dot")
+        call(["neato", "-Tpdf",args.outputFile+"_sol.dot","-o",args.outputFile+"_sol.pdf"])
+        call(["neato", "-Tpdf",args.outputFile+"_graph.dot","-o",args.outputFile+"_graph.pdf"])
+
+        def test():
+            solver(g, ["v1"], 1)
+
+       # print(min(timeit.repeat(test,repeat=100, number=1)))
+
     elif args.mode == "bench":
         iterations = args.n
         pass
