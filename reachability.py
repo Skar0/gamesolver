@@ -23,24 +23,30 @@ def reachability_solver(g, U, j):
     while len(queue) != 0:
         s = queue[0]
         queue = queue[1:]
+        # print("considering node "+str(s))
         for sbis in g.get_predecessors(s):
-            if g.get_node_region(sbis) == 0:
-                if g.get_node_player(sbis) == str(j):
+            # print("--considering predecessor " + str(sbis)+" "+str(g.get_node_player(sbis)))
+            if g.get_node_region(sbis) == -1:
+                if g.get_node_player(sbis) == j:
                     queue.append(sbis)
                     g.set_node_region(sbis, j)
                     g.set_node_strategy(sbis, s)
-                elif (g.get_node_player(sbis) == str(opponent)):
+                elif g.get_node_player(sbis) == opponent:
                     out[sbis] -= 1
                     if out[sbis] == 0:
                         queue.append(sbis)
                         g.set_node_region(sbis, j)
+                        # print("---- current regions "+str(g.get_regions()))
+                        # print("---- current strat "+str(g.get_strategies()))
 
     for node in g.get_nodes():
-        if g.get_node_region(node) != 1:
+        if g.get_node_region(node) != j:
             g.set_node_region(node, opponent)
             for predecessor in g.get_predecessors(node):
-                if g.get_node_region(predecessor) != 1:
+                if g.get_node_region(predecessor) != j and g.get_node_player(predecessor) == opponent:
                     g.set_node_strategy(predecessor, node)
+                    # print("---- current regions " + str(g.get_regions()))
+                    # print("---- current strat " + str(g.get_strategies()))
 
 
 def opposite(j):
