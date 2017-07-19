@@ -4,12 +4,19 @@ import timeit
 from subprocess import call
 import reachability as reachability
 import tools as tools
+import weakParity
 
 
 def command_line_handler():
+    """
+    This function parses the arguments given in the command line using python's argparse module. A special format of
+    command has been chosen and can be viewed by running "python solver.py -h".
+    :return: A Namespace containing the arguments and their values.
+    """
     parser = argparse.ArgumentParser(description='Parity and reachability game solver')
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('-r', action='store_true', help='Reachability games')
+    group.add_argument('-r', type=str, action='store', dest='target', nargs=2,
+                       help='Reachability games (supply target set)', metavar=('PLAYER', 'TARGET'))
     group.add_argument('-wp', action='store_true', help='Weak parity games')
     group.add_argument('-sp', action='store_true', help='Strong parity games')
 
@@ -37,7 +44,7 @@ def get_solver(args):
     :param args: the Namespace given by the parser
     :return: the corresponding solving function
     """
-    if args.r:
+    if args.target is not None:
         return reachability.reachability_solver
     elif args.wp:
         return None  # placeholder for weak parity solver
@@ -46,22 +53,40 @@ def get_solver(args):
 
 
 def solver():
+    """
+    Takes appropriate actions according to the chosen options (using command_line_handler() output).
+    """
+
+    # Parsing the command line arguments
     args = command_line_handler()
-    solver = get_solver(args)
 
+    # Solving mode
     if args.mode == "solve":
-        g = tools.load_from_file(args.inputFile)
-        solver(g, [1], 1)
-        tools.write_solution_to_file(g,args.outputFile+"_sol.dot")
-        tools.write_graph_to_file(g,args.outputFile+"_graph.dot")
-        call(["neato", "-Tpdf",args.outputFile+"_sol.dot","-o",args.outputFile+"_sol.pdf"])
-        call(["neato", "-Tpdf",args.outputFile+"_graph.dot","-o",args.outputFile+"_graph.pdf"])
+        g = tools.load_from_file(args.inputFile)  # loading game
 
-        def test():
-            solver(g, ["v1"], 1)
+        # Reachability
+        if args.target is not None:
+            player = int(args.target[0])  # getting player (as int)
+            target = map(int, args.target[1].split(","))  # getting targets (transforming them into ints)
+            solution = reachability.reachability_solver_updated(g, target,
+                                                                player)  # calling reachability solver on the game
 
-       # print(min(timeit.repeat(test,repeat=100, number=1)))
+        # Weak parity
+        elif args.wp:
+            solution = weakParity.weakParity_solver(g)  # calling weak parity solver on the game
+        else:
+            return None  # placeholder for strong parity solver
 
+        # If output option chosen
+        if args.outputFile is not None:
+            # TODO this needs to be changed to a writing function that takes a solution as argument
+            g.regions = solution[0]
+            g.strategies = solution[1]
+            tools.write_solution_to_file(g, args.outputFile + "_sol.dot")
+            # TODO remove : generated for testing
+            call(["neato", "-Tpdf", args.outputFile + "_sol.dot", "-o", args.outputFile + "_sol.pdf"])
+
+    # Benchmark mode
     elif args.mode == "bench":
         iterations = args.n
         pass
