@@ -17,6 +17,7 @@ class Graph(object):
         self.successors = defaultdict(list)
         self.nodes = defaultdict(tuple)
 
+        # TODO remove as this is created by the solving algorithms
         self.regions = defaultdict(lambda: -1)
         self.strategies = defaultdict(lambda: -1)
 
@@ -70,3 +71,23 @@ class Graph(object):
 
     def remove_predecessor(self, node, predecessor):
         self.predecessors[node].remove(predecessor)
+
+    def subgame(self, set):
+        sub = self.__class__()
+        for n in set:
+            sub.nodes[n] = self.nodes[n]
+        for n in sub.nodes:
+            for succ in self.successors[n]:
+                if succ in sub.nodes:
+                    sub.successors[n].append(succ)
+                    sub.predecessors[succ].append(n)
+        return sub
+
+    def __str__(self):
+        rep = ""
+        for node in self.nodes:
+            rep+=str(node)+"\n"+str(node)+" -> "
+            for succ in self.successors[node]:
+                rep+= str(succ)+", "
+            rep+="\n"
+        return rep
