@@ -1,10 +1,8 @@
 import argparse
-import timeit
-
 from subprocess import call
-import reachability as reachability
-import tools as tools
-import weakParity
+
+from solvers import reachability, weakParity, strongParity
+from tools import fileHandler as tools
 
 
 def command_line_handler():
@@ -75,7 +73,7 @@ def solver():
         elif args.wp:
             solution = weakParity.weakParity_solver(g)  # calling weak parity solver on the game
         else:
-            return None  # placeholder for strong parity solver
+            solution = strongParity.strongparity_solver(g)  # calling weak parity solver on the game
 
         # If output option chosen
         if args.outputFile is not None:
