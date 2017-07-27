@@ -1,4 +1,5 @@
 from collections import defaultdict
+
 import reachability
 
 
@@ -25,8 +26,6 @@ def nodesmax(g,i):
 
 
 def weakParity_solver(g):
-    regions = defaultdict(lambda: -1)
-    strategies = defaultdict(lambda: -1)
 
     h = g
     i = maxPriority(h)
@@ -39,10 +38,10 @@ def weakParity_solver(g):
         #print "iter "+str(k)+" -- "+str(Ak)+" -- "+str(Sk)
         p = []
         for node in Ak:
-            if Ak[node]  == k%2:
+            if Sk[node] != -1:
+                strategies[node] = Sk[node]
+            if Ak[node] == k%2:
                 regions[node] = k%2
-                if h.get_node_player(node) == k%2:
-                    strategies[node] = Sk[node]
             else:
                 p.append(node)
         h = h.subgame(p)
