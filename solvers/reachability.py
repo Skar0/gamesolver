@@ -59,7 +59,8 @@ def reachability_solver_updated(g, U, j):
     for node in U:
         queue.append(node)
         regions[node] = j
-        strategies[node] = g.get_successors(node)[0]
+        if g.get_node_player(node) == j:
+            strategies[node] = g.get_successors(node)[0]
 
     while len(queue) != 0:
         s = queue[0]
