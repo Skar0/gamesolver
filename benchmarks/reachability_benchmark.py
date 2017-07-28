@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from solvers.reachability import reachability_solver_updated
+from solvers.reachability import reachability_solver
 from tools import timer, generators
 
 
@@ -33,7 +33,7 @@ def benchmark(n, generator, t, p, iterations=10, plot=False):
         # #iterations calls to the solver are timed
         for j in range(iterations):
             with chrono:
-                regions, strategies = reachability_solver_updated(g, t, p) # solver call
+                regions, strategies = reachability_solver(g, t, p) # solver call
             temp.append(chrono.interval) # add time recording
 
         y.append(min(temp)) # get the minimum out of #iterations recordings
@@ -41,15 +41,12 @@ def benchmark(n, generator, t, p, iterations=10, plot=False):
 
     if plot:
         plt.grid(True)
-        plt.title(u"\\textbf{\Large Générateur 2 : graphes complets}")
+        plt.title(u"\\textbf{\Large Générateur :} "+str(generator.__name__).replace("_"," "))
         plt.xlabel(u'\large nombre de nœuds')
         plt.ylabel(u'\large temps (s)')
         coeficients = np.polyfit(n_, y, 2)
         polynom = np.poly1d(coeficients)
         points, = plt.plot(n_, y, 'g.',label=u'Mesures')
         fit, = plt.plot(n_, polynom(n_), 'b--', label=u"Régression polynomiale de degré 2") #\\\\"+str(coeficients[0])+u"$x^2 +$"+str(coeficients[1])+u"x +"+str(coeficients[2]))
-        plt.legend(handles=[points,fit])
-        plt.show()
-        #plt.savefig("figures/" + str(n) + "_gen2_n.png", bbox_inches='tight')
-
-#benchmark(100, generators.complete_graph, [1], 0, iterations=3, plot=True)
+        plt.legend(loc='upper left', handles=[points,fit])
+        plt.savefig(str(n)+"_"+generator.__name__+"_"+str(p)+".png", bbox_inches='tight')
