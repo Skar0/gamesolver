@@ -1,8 +1,10 @@
+# coding=utf-8
 import argparse
 from subprocess import call
-
+from benchmarks import reachability_benchmark as r_bench
 from solvers import reachability, weakParity, strongParity
 from tools import fileHandler as tools
+from tools import generators
 
 
 def command_line_handler():
@@ -66,8 +68,8 @@ def solver():
         if args.target is not None:
             player = int(args.target[0])  # getting player (as int)
             target = map(int, args.target[1].split(","))  # getting targets (transforming them into ints)
-            solution = reachability.reachability_solver_updated(g, target,
-                                                                player)  # calling reachability solver on the game
+            solution = reachability.reachability_solver(g, target,
+                                                        player)  # calling reachability solver on the game
 
         # Weak parity
         elif args.wp:
@@ -86,9 +88,20 @@ def solver():
 
     # Benchmark mode
     elif args.mode == "bench":
-        iterations = args.n
-        pass
-        # benchmark
+        iter = args.n
 
+        # Reachability
+        if args.target is not None:
+            output_array = u"Générateur".center(30)+"|"+u"Noeuds (n)".center(12)+"|"+"Arcs (m)".center(10)+"|"\
+                       +u"Atteignabilité (joueur 1)".center(28)+"|"+u"Atteignabilité (joueur 2)".center(28)+"\n"+\
+                           "-"*108+"\n"
+            output_array+= r_bench.benchmark_complete_graph(iter,[1],plot=True)
+            output_array += r_bench.benchmark_worstcase_graph(iter,[1],plot=True)
+            print output_array
+        # Weak parity
+        elif args.wp:
+            pass  # bench wp
+        else:
+            pass  # bench sp
 
 solver()
