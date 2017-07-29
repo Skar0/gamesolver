@@ -44,7 +44,7 @@ def strongparity_solver(g):
 
         U = nodesmax(g,i)
 
-        A, t1 = reachability.reachability_solver_updated(g,U,j)
+        A, t1 = reachability.reachability_solver(g, U, j)
 
         subGame = []
         #nodes to stay in the subgame ie not in the attractor ie region assigned is opposite
@@ -66,7 +66,7 @@ def strongparity_solver(g):
 
         if flag:
             #sinon
-            B,v = reachability.reachability_solver_updated(g,W1,opposite(j))
+            B,v = reachability.reachability_solver(g, W1, opposite(j))
             subGame = []
             # nodes to stay in the subgame ie not in the attractor ie region assigned is opposite
             for node in B:

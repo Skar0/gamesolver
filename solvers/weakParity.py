@@ -34,7 +34,7 @@ def weakParity_solver(g):
     strategies = defaultdict(lambda: -1)
 
     for k in range(i, -1, -1):
-        (Ak,Sk) = reachability.reachability_solver_updated(h, nodesmax(h, k), k % 2)
+        (Ak,Sk) = reachability.reachability_solver(h, nodesmax(h, k), k % 2)
         #print "iter "+str(k)+" -- "+str(Ak)+" -- "+str(Sk)
         p = []
         for node in Ak:
