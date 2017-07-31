@@ -11,22 +11,25 @@ def weak_parity_solver(g):
 
     W1 = []
     W2 = []
-    strategies = defaultdict(lambda: -1)
+    strat1 = defaultdict(lambda: -1)
+    strat2 = defaultdict(lambda: -1)
 
     # Considering priorities from i to 0 in decreasing order
     for k in range(i, -1, -1):
         current_player = k % 2
         (Ak, Sk), (regions_opponent, strategy_opponent) = reachability.reachability_solver_tuples(h, ops.i_priority_node(h, k), current_player)
         #print "iter "+str(k)+" -- "+str(Ak)+" -- "+str(Sk)
-        p = []
-        strategies.update(strategy_opponent)
-        strategies.update(Sk)
 
         if current_player == 0:
             W1.extend(Ak)
+            strat1.update(Sk)
+            strat2.update(strategy_opponent)
+
         else:
             W2.extend(Ak)
+            strat2.update(Sk)
+            strat1.update(strategy_opponent)
 
         h = h.subgame(regions_opponent)
-
-    return W1, W2, strategies
+        
+    return (W1, strat1), (W2, strat2)
