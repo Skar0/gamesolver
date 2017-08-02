@@ -31,3 +31,15 @@ def max_priority(g):
     nodes = g.nodes  # Nodes from g
     # get maximum node tuple (node_id, (node_player, node_priority)) according to its priority, then select its priority
     return max(nodes.iteritems(), key=lambda (k, v): v[1])[1][1]
+
+
+def update_strategy(strat1, strat2):
+    """
+    Updates strategy 1 by adding key/value pairs of strategy 2.
+    :param strat1: Old strategy
+    :param strat2: Strategy to add
+    :return: A new strategy which merges strategies 1 and 2 (2 overwrites 1 in case of duplicate keys)
+    """
+    new_strat = strat1.copy()
+    new_strat.update(strat2)
+    return new_strat
