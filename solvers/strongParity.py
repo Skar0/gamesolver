@@ -170,7 +170,7 @@ def strongparity_solver2(g):
                 strat1.update(sig__jbar)
                 strat1.update(sig_jbar)
 
-    print (W1,strat1),(W2, strat2)
+    #print (W1,strat1),(W2, strat2)
     return (W1,strat1),(W2, strat2)
 
 
