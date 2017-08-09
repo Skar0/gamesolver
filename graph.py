@@ -86,7 +86,7 @@ class Graph(object):
     def __str__(self):
         rep = ""
         for node in self.nodes:
-            rep+=str(node)+"\n"+str(node)+" -> "
+            rep+=str(node)+" "+str(self.nodes[node])+"\n"+str(node)+" -> "
             for succ in self.successors[node]:
                 rep+= str(succ)+", "
             rep+="\n"
