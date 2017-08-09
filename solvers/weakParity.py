@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from solvers import reachability
+from solvers import reachability as rs
 from tools import operations as ops
 
 
@@ -17,7 +17,7 @@ def weak_parity_solver(g):
     # Considering priorities from i to 0 in decreasing order
     for k in range(i, -1, -1):
         current_player = k % 2
-        (Ak, Sk), (regions_opponent, strategy_opponent) = reachability.reachability_solver_tuples(h, ops.i_priority_node(h, k), current_player)
+        (Ak, Sk), (regions_opponent, strategy_opponent) = rs.reachability_solver_tuples(h, ops.i_priority_node(h, k), current_player)
         #print "iter "+str(k)+" -- "+str(Ak)+" -- "+str(Sk)
 
         if current_player == 0:
