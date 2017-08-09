@@ -43,3 +43,25 @@ def update_strategy(strat1, strat2):
     new_strat = strat1.copy()
     new_strat.update(strat2)
     return new_strat
+
+def print_solution(solution, player):
+    """
+    Formats the solution of a game and prints it in the console.
+    :param solution: if player is 0, expected solution format is (W_0, sigma_0),(W_1, sigma_1). If player is 1, invert.
+    :param player: the player corresponding to the first tuple in solution.
+    :return: prints formatted solution
+    """
+    if player == 0:
+        (W_0, sigma_0), (W_1, sigma_1) = solution
+    else :
+        (W_1, sigma_1), (W_0, sigma_0) = solution
+
+    print "Winning region of player 0 : "+str(W_0)
+    print "Winning strategy of player 0 :"
+    for key, value in sigma_0.iteritems():
+        print " "+str(key)+" -> "+str(value)
+    print " "
+    print "Winning region of player 1 : " + str(W_1)
+    print "Winning strategy of player 1 :"
+    for key, value in sigma_1.iteritems():
+        print " " + str(key) + " -> " + str(value)
