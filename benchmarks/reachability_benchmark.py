@@ -81,7 +81,7 @@ def benchmark_complete_graph(n, iterations=3, step=10, plot=False, regression=Fa
             plt.ylabel(u'temps (s)')
             coeficients = np.polyfit(n_, y_p0, 2)
             polynom = np.poly1d(coeficients)
-            points0, = plt.plot(n_, y_p0, 'g.', label=u"Temps d'exécution, joueur 0\nEnsemble cible {v1}")
+            points0, = plt.plot(n_, y_p0, 'g.', label=u"Temps d'exécution, joueur 0,\nensemble cible {v1}")
             fit0, = plt.plot(n_, polynom(n_), 'b--', label=u"Régression polynomiale de degré 2")
             plt.legend(loc='upper left', handles=[points0, fit0])
             plt.savefig(path + "completeGraph_" + str(n) + "nodes_player0.png", bbox_inches='tight')
@@ -94,7 +94,7 @@ def benchmark_complete_graph(n, iterations=3, step=10, plot=False, regression=Fa
             plt.ylabel(u'temps (s)')
             coeficients = np.polyfit(n_, y_p1, 1)
             polynom = np.poly1d(coeficients)
-            points1, = plt.plot(n_, y_p1, 'g.', label=u"Temps d'exécution, joueur 1\nEnsemble cible {v1}")
+            points1, = plt.plot(n_, y_p1, 'g.', label=u"Temps d'exécution, joueur 1,\nensemble cible {v1}")
             fit1, = plt.plot(n_, polynom(n_), 'b--',
                              label=u"Régression linéaire")  # \\\\"+str(coeficients[0])+u"$x^2 +$"+str(coeficients[1])+u"x +"+str(coeficients[2]))
             plt.legend(loc='upper left', handles=[points1, fit1])
@@ -106,7 +106,7 @@ def benchmark_complete_graph(n, iterations=3, step=10, plot=False, regression=Fa
             plt.title(u"Graphes complets de taille 1 à " + str(n))
             plt.xlabel(u'nombre de nœuds')
             plt.ylabel(u'temps (s)')
-            points0, = plt.plot(n_, y_p0, 'g.', label=u"Temps d'exécution, joueur 0\nEnsemble cible {v1}")
+            points0, = plt.plot(n_, y_p0, 'g.', label=u"Temps d'exécution, joueur 0,\nensemble cible {v1}")
             plt.legend(loc='upper left', handles=[points0])
             plt.savefig(path + "completeGraph_" + str(n) + "nodes_player0.png", bbox_inches='tight')
             plt.clf()
@@ -116,7 +116,7 @@ def benchmark_complete_graph(n, iterations=3, step=10, plot=False, regression=Fa
             plt.title(u"Graphes complets de taille 1 à " + str(n))
             plt.xlabel(u'nombre de nœuds')
             plt.ylabel(u'temps (s)')
-            points1, = plt.plot(n_, y_p1, 'g.', label=u"Temps d'exécution, joueur 1\nEnsemble cible {v1}")
+            points1, = plt.plot(n_, y_p1, 'g.', label=u"Temps d'exécution, joueur 1,\nensemble cible {v1}")
             plt.legend(loc='upper left', handles=[points1])
             plt.savefig(path + "completeGraph_" + str(n) + "nodes_player1.png", bbox_inches='tight')
             plt.clf()
@@ -193,12 +193,12 @@ def benchmark_worst_case(n, iterations=3, step=10, plot=False, regression=False,
     if plot:
         if regression:
             plt.grid(True)
-            plt.title(u"Graphes pire cas de taille 1 à " + str(n))
+            plt.title(u"Graphes 'pire cas' de taille 1 à " + str(n))
             plt.xlabel(u'nombre de nœuds')
             plt.ylabel(u'temps (s)')
             coeficients = np.polyfit(n_, y_p0, 2)
             polynom = np.poly1d(coeficients)
-            points0, = plt.plot(n_, y_p0, 'g.', label=u"Temps d'exécution, joueur 0\nEnsemble cible {v1}")
+            points0, = plt.plot(n_, y_p0, 'g.', label=u"Temps d'exécution, joueur 0,\nensemble cible {v1}")
             fit0, = plt.plot(n_, polynom(n_), 'b--', label=u"Régression polynomiale de degré 2")
             plt.legend(loc='upper left', handles=[points0, fit0])
             plt.savefig(path + "worstCase_" + str(n) + "nodes_player0.png", bbox_inches='tight')
@@ -206,12 +206,12 @@ def benchmark_worst_case(n, iterations=3, step=10, plot=False, regression=False,
             plt.close()
 
             plt.grid(True)
-            plt.title(u"Graphes pire cas de taille 1 à " + str(n))
+            plt.title(u"Graphes 'pire cas' de taille 1 à " + str(n))
             plt.xlabel(u'nombre de nœuds')
             plt.ylabel(u'temps (s)')
             coeficients = np.polyfit(n_, y_p1, 1)
             polynom = np.poly1d(coeficients)
-            points1, = plt.plot(n_, y_p1, 'g.', label=u"Temps d'exécution, joueur 1\nEnsemble cible {v1}")
+            points1, = plt.plot(n_, y_p1, 'g.', label=u"Temps d'exécution, joueur 1,\nensemble cible {v1}")
             fit1, = plt.plot(n_, polynom(n_), 'b--',
                              label=u"Régression linéaire")  # \\\\"+str(coeficients[0])+u"$x^2 +$"+str(coeficients[1])+u"x +"+str(coeficients[2]))
             plt.legend(loc='upper left', handles=[points1, fit1])
@@ -223,7 +223,7 @@ def benchmark_worst_case(n, iterations=3, step=10, plot=False, regression=False,
             plt.title(u"Graphes pire cas de taille 1 à " + str(n))
             plt.xlabel(u'nombre de nœuds')
             plt.ylabel(u'temps (s)')
-            points0, = plt.plot(n_, y_p0, 'g.', label=u"Temps d'exécution, joueur 0\nEnsemble cible {v1}")
+            points0, = plt.plot(n_, y_p0, 'g.', label=u"Temps d'exécution, joueur 0,\nensemble cible {v1}")
             plt.legend(loc='upper left', handles=[points0])
             plt.savefig(path + "worstCase_" + str(n) + "nodes_player0.png", bbox_inches='tight')
             plt.clf()
@@ -233,7 +233,7 @@ def benchmark_worst_case(n, iterations=3, step=10, plot=False, regression=False,
             plt.title(u"Graphes pire cas de taille 1 à " + str(n))
             plt.xlabel(u'nombre de nœuds')
             plt.ylabel(u'temps (s)')
-            points1, = plt.plot(n_, y_p1, 'g.', label=u"Temps d'exécution, joueur 1\nEnsemble cible {v1}")
+            points1, = plt.plot(n_, y_p1, 'g.', label=u"Temps d'exécution, joueur 1,\nensemble cible {v1}")
             plt.legend(loc='upper left', handles=[points1])
             plt.savefig(path + "worstCase_" + str(n) + "nodes_player1.png", bbox_inches='tight')
             plt.clf()
@@ -306,11 +306,11 @@ def benchmark_complete_targetset(n, iterations=3, step=10, plot=False, regressio
         if regression:
             coeficients = np.polyfit(n_, y, 2)
             polynom = np.poly1d(coeficients)
-            points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution\nEnsemble cible : V")
+            points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution,\nensemble cible : V")
             fit, = plt.plot(n_, polynom(n_), 'b--', label=u"Régression polynomiale de degré 2")
             plt.legend(loc='upper left', handles=[points, fit])
         else:
-            points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution\nEnsemble cible : V")
+            points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution,\nensemble cible : V")
             plt.legend(loc='upper left', handles=[points])
         plt.savefig(path + "complete_graph" + "_" + str(n) + "nodes_targetallnodes"+ ".png",
                     bbox_inches='tight')
@@ -384,12 +384,12 @@ def benchmark(n, generator, t, p, iterations=3, step=10, plot=False, regression=
         if regression:
             coeficients = np.polyfit(n_, y, order)
             polynom = np.poly1d(coeficients)
-            points, = plt.plot(n_, y, 'g.', label=u'Mesures pour le joueur ' + str(p) + u'\nEnsemble cible ' + str(t))
+            points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution, joueur " + str(p) + u',\nensemble cible ' + str(t))
             fit, = plt.plot(n_, polynom(n_), 'b--', label=u"Régression polynomiale de degré " + str(
                 order))  # \\\\"+str(coeficients[0])+u"$x^2 +$"+str(coeficients[1])+u"x +"+str(coeficients[2]))
             plt.legend(loc='upper left', handles=[points, fit])
         else:
-            points, = plt.plot(n_, y, 'g.', label=u'Mesures pour le joueur ' + str(p) + u'\nEnsemble cible ' + str(t))
+            points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution, joueur " + str(p) + u',\nensemble cible ' + str(t))
             plt.legend(loc='upper left', handles=[points])
         plt.savefig(path + generator.__name__ + "_" + str(n) + "nodes_player" + str(p) + "_target" + str(t) + ".png",
                     bbox_inches='tight')
@@ -402,6 +402,6 @@ regression=False, step=10, path="../resu/")"""
 """benchmark(1000, generators.reachability_worstcase_chain_optimised,[1],0,iterations=1, step=10,plot=True,
 regression=True, order = 2,path="../resu/")"""
 
-benchmark_complete_graph(10000,iterations=3,step=100,plot=True,path="../resu/")
-benchmark_worst_case(10000,iterations=3,step=100,plot=True,path="../resu/")
+benchmark_complete_graph(10000,iterations=3,step=100,plot=True, regression=True,path="../resu/")
+benchmark_worst_case(10000,iterations=3,step=100,plot=True, regression=True,path="../resu/")
 benchmark_complete_targetset(10000, iterations=3, step=100, plot=True, regression=True, path="../resu/")
