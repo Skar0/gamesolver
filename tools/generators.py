@@ -204,75 +204,81 @@ def parity_worstcase_chain_unordered(n):
     return g
 
 def strongParity_worst_case(n):
+    """
+    This is a worst case generator for strong parity game yielding an exponential complexity for the algorithm.
+    The construction of this type of graph, which contains n*5 nodes can be found in Oliver Friedmann's paper "Recursive
+    Algorithm for Parity Games requires Exponential Time".
+    :param n: the number for the generation of the graph (yields n*5 nodes).
+    :return: a worst case graph for the recursive algorithm.
+    """
     g = Graph()
-    ai = [">"]
-    bi = [">"]
-    ci = []
-    di = []
-    ei = []
-    # creating nodes (ok)
+    # We use a list to store each of the 5 types of nodes. Each node has a unique integer value, but for increased
+    # readability and understandability, we work with the nodes using their list and the position they are in their list
+    # For a and b, first element is a placeholder so indexes start at 1
+    a = [">"]
+    b = [">"]
+    c = []
+    d = []
+    e = []
+
+    # creating nodes, their integer value is from 1 to 5*n
+    # we adapted the code (modulos and parities for c,d,e) because we count from 1 to n in the loop
     for i in range(1,n+1):
         g.add_node(i, (1-(i%2), 1-(i%2)))
-        ai.append(i)
+        a.append(i)
         g.add_node(n+i, (i%2, 1-(i%2)))
-        bi.append(n+i)
+        b.append(n+i)
         g.add_node((2*n)+i, ((i%2), (3*(i-1))+5))
-        ci.append((2*n)+i)
+        c.append((2*n)+i)
         g.add_node((3*n)+i, (1-(i%2), (3*(i-1))+4))
-        di.append((3*n)+i)
+        d.append((3*n)+i)
         g.add_node((4*n)+i, (i%2, (3*(i-1))+3))
-        ei.append((4*n)+i)
+        e.append((4*n)+i)
 
-    print ai
-    print bi
-    print ci
-    print di
-    print ei
-
+    # adding a and b successors
     for i in range(1,n+1):
-        g.add_successor(ai[i], bi[i])
-        g.add_predecessor(bi[i], ai[i])
+        g.add_successor(a[i], b[i])
+        g.add_predecessor(b[i], a[i])
 
-        g.add_successor(ai[i], di[i-1])
-        g.add_predecessor(di[i-1], ai[i])
+        g.add_successor(a[i], d[i-1])
+        g.add_predecessor(d[i-1], a[i])
 
-        g.add_successor(bi[i], ai[i])
-        g.add_predecessor(ai[i], bi[i])
+        g.add_successor(b[i], a[i])
+        g.add_predecessor(a[i], b[i])
 
-        if i >= 0 and i < len(ci):
-            g.add_successor(bi[i], ci[i])
-            g.add_predecessor(ci[i], bi[i])
-        """
+        if i >= 0 and i < len(c):
+            g.add_successor(b[i], c[i])
+            g.add_predecessor(c[i], b[i])
 
-        g.add_successor(n+i, i)
-        g.add_predecessor(i, n+i)
+    # adding c,d,e successors
+    for i in range(0, n):
+        #c
+        g.add_successor(c[i], b[i+1])
+        g.add_predecessor(b[i+1], c[i])
 
-        if g.nodes[(2*n)+i-1] != -1:
-            g.add_successor(n+i,(2*n)+i-1 )
-            g.add_predecessor((2*n)+i-1, n+i)
+        g.add_successor(c[i], d[i])
+        g.add_predecessor(d[i], c[i])
 
-        # ci
-        g.add_successor((2*n)+i, n+i)
-        g.add_predecessor(n+i, (2*n)+i)
+        #d
+        g.add_successor(d[i], e[i])
+        g.add_predecessor(e[i], d[i])
 
-        g.add_successor((2 * n) + i, (3*n)+i-1)
-        g.add_predecessor((3*n)+i-1, (2 * n) + i)
+        if i-1 >= 0 and i-1 < len(d):
+            g.add_successor(d[i], d[i-1])
+            g.add_predecessor(d[i-1], d[i])
 
-        #di
-        g.add_successor((3*n)+i, (4*n)+i)
-        g.add_predecessor((4*n)+i, (3*n)+i)
+        if i+1 >= 0 and i+1 < len(d):
+            g.add_successor(d[i], d[i+1])
+            g.add_predecessor(d[i+1], d[i])
 
-        if g.nodes[(3*n)+i-2] != -1:
-            g.add_successor((3*n)+i,(3*n)+i-2)
-            g.add_predecessor((3*n)+i-2, (3*n)+i)
-        """
+        #e
+        g.add_successor(e[i], b[i + 1])
+        g.add_predecessor(b[i + 1], e[i])
+
+        g.add_successor(e[i], d[i])
+        g.add_predecessor(d[i], e[i])
+
     return g
-
-print strongParity_worst_case(3)
-
-
-
-
 
 
 
