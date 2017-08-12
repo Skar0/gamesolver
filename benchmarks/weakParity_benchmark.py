@@ -82,7 +82,7 @@ def benchmark(n, generator, iterations=3, step=10, plot=False, regression=False,
             points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution")
             plt.legend(loc='upper left', handles=[points])
 
-        plt.savefig(path +"wp_"+generator.__name__ + "_" + str(n)+".png", bbox_inches='tight')
+        plt.savefig(path, bbox_inches='tight')
         plt.clf()
         plt.close()
 

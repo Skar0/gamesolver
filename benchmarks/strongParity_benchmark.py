@@ -133,10 +133,10 @@ def benchmark_worst_case(n, iterations=3, step=10, plot=False, path=""):
         plt.title(u"Graphes 'pire cas' de taille 5 à " + str(5*n))
         plt.xlabel(u'nombre de nœuds')
         plt.ylabel(u'temps (s)')
-        plt.yscale("log")
+        #plt.yscale("log")
         points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution")
         plt.legend(loc='upper left', handles=[points])
-        plt.savefig(path + "sp_worstcase_" + str(n) + ".png", bbox_inches='tight')
+        plt.savefig(path, bbox_inches='tight')
         plt.clf()
         plt.close()
 
