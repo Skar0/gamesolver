@@ -41,7 +41,7 @@ def benchmark_complete_graph(n, iterations=3, step=10, plot=False, regression=Fa
         temp_p0 = []  # temp list for #iterations recordings player 0
         temp_p1 = []  # temp list for #iterations recordings player 0
 
-        g = generators.complete_graph_optimised(i)  # generated game
+        g = generators.complete_graph(i)  # generated game
 
         # #iterations calls to the solver are timed
         for j in range(iterations):
@@ -92,11 +92,11 @@ def benchmark_complete_graph(n, iterations=3, step=10, plot=False, regression=Fa
             plt.title(u"Graphes complets de taille 1 à " + str(n))
             plt.xlabel(u'nombre de nœuds')
             plt.ylabel(u'temps (s)')
-            coeficients = np.polyfit(n_, y_p1, 1)
+            coeficients = np.polyfit(n_, y_p1, 2)
             polynom = np.poly1d(coeficients)
             points1, = plt.plot(n_, y_p1, 'g.', label=u"Temps d'exécution, joueur 1,\nensemble cible {v1}")
             fit1, = plt.plot(n_, polynom(n_), 'b--',
-                             label=u"Régression linéaire")  # \\\\"+str(coeficients[0])+u"$x^2 +$"+str(coeficients[1])+u"x +"+str(coeficients[2]))
+                             label=u"Régression polynomiale de degré 2")  # \\\\"+str(coeficients[0])+u"$x^2 +$"+str(coeficients[1])+u"x +"+str(coeficients[2]))
             plt.legend(loc='upper left', handles=[points1, fit1])
             plt.savefig(path + "completeGraph_" + str(n) + "nodes_player1.png", bbox_inches='tight')
             plt.clf()
@@ -158,7 +158,7 @@ def benchmark_worst_case(n, iterations=3, step=10, plot=False, regression=False,
         temp_p0 = []  # temp list for #iterations recordings player 0
         temp_p1 = []  # temp list for #iterations recordings player 0
 
-        g = generators.reachability_worstcase_chain_optimised(i)  # generated game
+        g = generators.reachability_worst_case(i)  # generated game
 
         # #iterations calls to the solver are timed
         for j in range(iterations):
@@ -264,7 +264,7 @@ def benchmark_complete_targetset(n, iterations=3, step=10, plot=False, regressio
 
     chrono = timer.Timer(verbose=False)  # Timer object
 
-    info = "Time to solve, player " + str(1) + ", target set : V"  # info about the current benchmark
+    info = "Time to solve (s), player " + str(1) + ", target set : V"  # info about the current benchmark
 
     # print first line of output
     print u"Generator".center(40) + "|" + u"Nodes (n)".center(12) + "|" + info.center(40) + "\n" + \
@@ -273,7 +273,7 @@ def benchmark_complete_targetset(n, iterations=3, step=10, plot=False, regressio
     # games generated are size 1 to n
     for i in range(1, n + 1, step):
         temp = []  # temp list for #iterations recordings
-        g = generators.complete_graph_optimised(i)  # generated game
+        g = generators.complete_graph(i)  # generated game
 
         # #iterations calls to the solver are timed
 
@@ -317,23 +317,21 @@ def benchmark_complete_targetset(n, iterations=3, step=10, plot=False, regressio
         plt.clf()
         plt.close()
 
-def benchmark(n, generator, t, p, iterations=3, step=10, plot=False, regression=False, order=1, path=""):
+def benchmark(n, generator, t, p, iterations=3, step=10, plot=False, regression=False, order=1, path="", title=""):
     """
-    General benchmarking function. Calls reachability solver for player p and target set t on games generated using the
-    provided generator function. Games of size 1 to n are solved and a timer records the time taken to get the solution.
-    The solver can be timed several times and the minimum value is selected using optional parameter iterations (to
-    avoid recording time spikes and delays due to system load). The result as well as a regression can be plotted using
-    matplotlib.
+    General benchmarking function. Calls weak parity solver on games generated using the provided generator function.
+    Games of size 1 to n are solved and a timer records the time taken to get the solution. The solver can be timed
+    several times and the minimum value is selected using optional parameter iterations (to avoid recording time spikes
+    and delays due to system load). The result as well as a regression can be plotted using matplotlib.
     :param n: number of nodes in generated graph.
     :param generator: graph generator function.
-    :param t: target set.
-    :param p: player for attractor computation.
     :param iterations: number of times the algorithm is timed (default is 10).
     :param step: step to be taken in the generation.
     :param plot: if True, plots the data using matplotlib.
     :param regression: if True, plots a polynomial regression along with the data.
     :param order: order of that regression.
     :param path: path to the file in which to write the result.
+    :param title: the title to be used in the plot.
     """
 
     y = []  # list for the time recordings
@@ -345,13 +343,13 @@ def benchmark(n, generator, t, p, iterations=3, step=10, plot=False, regression=
 
     chrono = timer.Timer(verbose=False)  # Timer object
 
-    info = "Time to solve, player " + str(p) + ", target set " + str(t)  # info about the current benchmark
+    info = "Time to solve (s), player " + str(p) + ", target set " + str(t)  # info about the current benchmark
 
     # print first line of output
     print u"Generator".center(40) + "|" + u"Nodes (n)".center(12) + "|" + info.center(40) + "\n" + \
           "-" * 108
 
-    # games generated are size 1 to n
+    # games generated are size 1 to n with a certain step
     for i in range(1, n + 1, step):
         temp = []  # temp list for #iterations recordings
         g = generator(i)  # generated game
@@ -372,36 +370,42 @@ def benchmark(n, generator, t, p, iterations=3, step=10, plot=False, regression=
 
         nbr_generated += 1  # updating the number of generated mesures
 
-        # at the end, print total time
-    print "-" * 108 + "\n" + "Total time".center(40) + "|" + "#".center(12) + "|" + \
+    # at the end, print total time
+    print "-" * 108 + "\n" + "Total (s)".center(40) + "|" + "#".center(12) + "|" + \
           str(total_time).center(40) + "\n" + "-" * 108 + "\n"
 
+    # if we need to plot
     if plot:
         plt.grid(True)
-        plt.title(u"Generateur : " + str(generator.__name__).replace("_", " "))
+        if title != "":
+            plt.title(title)
+        else:
+            plt.title(u"Générateur : " + str(generator.__name__).replace("_", " "))
         plt.xlabel(u'nombre de nœuds')
         plt.ylabel(u'temps (s)')
         if regression:
             coeficients = np.polyfit(n_, y, order)
             polynom = np.poly1d(coeficients)
             points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution, joueur " + str(p) + u',\nensemble cible ' + str(t))
-            fit, = plt.plot(n_, polynom(n_), 'b--', label=u"Régression polynomiale de degré " + str(
-                order))  # \\\\"+str(coeficients[0])+u"$x^2 +$"+str(coeficients[1])+u"x +"+str(coeficients[2]))
+            fit, = plt.plot(n_, polynom(n_), 'b--',  alpha=0.6, label=u"Régression polynomiale de degré " + str(order))
             plt.legend(loc='upper left', handles=[points, fit])
         else:
-            points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution, joueur " + str(p) + u',\nensemble cible ' + str(t))
+            points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution")
             plt.legend(loc='upper left', handles=[points])
-        plt.savefig(path + generator.__name__ + "_" + str(n) + "nodes_player" + str(p) + "_target" + str(t) + ".png",
-                    bbox_inches='tight')
+
+        plt.savefig(path, bbox_inches='tight')
         plt.clf()
         plt.close()
 
 
-"""benchmark(2000, generators.reachability_worstcase_chain2_corr, [1], 0, iterations=2, plot=True, order=1, 
-regression=False, step=10, path="../resu/")"""
-"""benchmark(1000, generators.reachability_worstcase_chain_optimised,[1],0,iterations=1, step=10,plot=True,
-regression=True, order = 2,path="../resu/")"""
+""""
+benchmark(2000, generators.reachability_worstcase_chain2_corr, [1], 0, iterations=2, plot=True, order=1,
+regression=False, step=10, path="../resu/")
+benchmark(1000, generators.reachability_worstcase_chain_optimised,[1],0,iterations=1, step=10,plot=True,
+regression=True, order = 2,path="../resu/")
 
 benchmark_complete_graph(10000,iterations=3,step=100,plot=True, regression=True,path="../resu/")
+
 benchmark_worst_case(10000,iterations=3,step=100,plot=True, regression=True,path="../resu/")
 benchmark_complete_targetset(10000, iterations=3, step=100, plot=True, regression=True, path="../resu/")
+"""
