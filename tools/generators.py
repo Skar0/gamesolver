@@ -1,3 +1,5 @@
+from random import randint
+
 from graph import Graph
 
 def complete_graph(n):
@@ -38,40 +40,105 @@ def complete_graph_optimised(n):
     g = Graph()  # create empty graph
 
     # create n-1 nodes belonging to player 1
-    for i in range(2, n + 1):
+    for i in range(1, n + 1):
         g.add_node(i, (1, 0))
         g.successors[i] = range(1,n+1)
         g.predecessors[i] = range(1,n+1)
 
-    # same for node 1 which belongs to player 0
-    g.add_node(1, (0, 0))
-    for j in range(1, n + 1):
-        g.add_successor(1, j)
-        g.add_predecessor(j, 1)
-
     return g
 
-def complete_graph_oneplayer_parity(n):
+def complete_graph_weakparity(n):
     """
     Generate a complete graph (with self loops) containing n nodes. Nodes are numbered 1 to n.
-    All nodes belong to player 1 except node 1 which belongs to player 0. All priorities are 0.
-    This is used as a worst case for reachability games.
+    All nodes belong to player 0. All priorities are 0 expect for node 1 which has priority 2.
+    This is used as a worst case for weak parity game where we compute an attractor with the worst case for the
+    reachability algorithm.
     :param n: number of nodes.
     :return: a Graph object representing the complete graph.
     """
     g = Graph()  # create empty graph
 
     # create n-1 nodes belonging to player 1
-    for i in range(2, n + 1):
-        g.add_node(i, (1, 0))
+    for i in range(1, n + 1):
+        g.add_node(i, (0, 0))
+        g.successors[i] = range(1,n+1)
+        g.predecessors[i] = range(1,n+1)
+    g.nodes[1] = (0,2)
+    return g
+
+def complete_graph_oneplayer_sevparity(n):
+    """
+    Generate a complete graph (with self loops) containing n nodes. Nodes are numbered 1 to n.
+    All nodes belong to player 1. All priorities are 0.
+    This is used as a worst case for weak parity game where we compute an attractor with the worst case for the
+    reachability algorithm.
+    :param n: number of nodes.
+    :return: a Graph object representing the complete graph.
+    """
+    g = Graph()  # create empty graph
+
+    # create n-1 nodes belonging to player 1
+    for i in range(1, n + 1):
+        g.add_node(i, (1, i))
         g.successors[i] = range(1,n+1)
         g.predecessors[i] = range(1,n+1)
 
-    # same for node 1 which belongs to player 0
-    g.add_node(1, (0, 0))
-    for j in range(1, n + 1):
-        g.add_successor(1, j)
-        g.add_predecessor(j, 1)
+    return g
+
+def complete_graph_oneplayer_sevparity2(n):
+    """
+    Generate a complete graph (with self loops) containing n nodes. Nodes are numbered 1 to n.
+    All nodes belong to player 1. All priorities are 0.
+    This is used as a worst case for weak parity game where we compute an attractor with the worst case for the
+    reachability algorithm.
+    :param n: number of nodes.
+    :return: a Graph object representing the complete graph.
+    """
+    g = Graph()  # create empty graph
+
+    # create n-1 nodes belonging to player 1
+    for i in range(1, n + 1):
+        g.add_node(i, (1, i+1))
+        g.successors[i] = range(1,n+1)
+        g.predecessors[i] = range(1,n+1)
+
+    return g
+
+def complete_graph_oneplayer_sevparity3(n):
+    """
+    Generate a complete graph (with self loops) containing n nodes. Nodes are numbered 1 to n.
+    All nodes belong to player 1. All priorities are 0.
+    This is used as a worst case for weak parity game where we compute an attractor with the worst case for the
+    reachability algorithm.
+    :param n: number of nodes.
+    :return: a Graph object representing the complete graph.
+    """
+    g = Graph()  # create empty graph
+
+    # create n-1 nodes belonging to player 1
+    for i in range(1, n + 1):
+        g.add_node(i, (i%2, i+1))
+        g.successors[i] = range(1,n+1)
+        g.predecessors[i] = range(1,n+1)
+
+    return g
+
+def complete_graph_oneplayer_sevparity4(n):
+    """
+    Generate a complete graph (with self loops) containing n nodes. Nodes are numbered 1 to n.
+    All nodes belong to player 1. All priorities are 0.
+    This is used as a worst case for weak parity game where we compute an attractor with the worst case for the
+    reachability algorithm.
+    :param n: number of nodes.
+    :return: a Graph object representing the complete graph.
+    """
+    g = Graph()  # create empty graph
+
+    # create n-1 nodes belonging to player 1
+    for i in range(1, n + 1):
+        g.add_node(i, (1, 4*i))
+        g.successors[i] = range(1,n+1)
+        g.predecessors[i] = range(1,n+1)
 
     return g
 
@@ -280,10 +347,41 @@ def strongParity_worst_case(n):
 
     return g
 
+def random(n, p, i, o):
+    """
+    Generates a random game with n nodes, priorities chosen between 0 and p and outdegree of nodes between i and o.
+    No verification is made regarding wether the input makes sense (out degree larger than the number of nodes in the
+    game, ect).
+    :param n: number of nodes.
+    :param p: number of priorities.
+    :param i: min outdegree.
+    :param o: max outdegree.
+    :return: a random game.
+    """
+    g = Graph()
+    for node in range(0,n):
+        g.add_node(node,(randint(0,1), randint(0,p)))
+        notself = False
+        for h in range(i,o+1):
+            found = False
+            while not found:
+                succ = randint(0,n)
+                if not notself:
+                    if succ != node:
+                        g.add_successor(node, succ)
+                        g.add_predecessor(succ, node)
+                        found = True
+                        notself = True
+                if notself and succ not in g.successors[node]:
+                    g.add_successor(node,succ)
+                    g.add_predecessor(succ,node)
+                    found = True
+    return g
 
 
+g = complete_graph_optimised(4)
 
-
-
+print g.predecessors
+print g.successors
 
 
