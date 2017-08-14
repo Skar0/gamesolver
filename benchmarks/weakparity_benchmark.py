@@ -2,9 +2,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from graph import Graph
 from solvers.weakParity import weak_parity_solver
-from tools import timer, generators, operations
+from tools import timer
+
+"""
+This module benchmarks the weak parity games.
+"""
+
 
 def benchmark(n, generator, iterations=3, step=10, plot=False, regression=False, order=1, path="", title=""):
     """
@@ -76,7 +80,7 @@ def benchmark(n, generator, iterations=3, step=10, plot=False, regression=False,
             coeficients = np.polyfit(n_, y, order)
             polynom = np.poly1d(coeficients)
             points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution")
-            fit, = plt.plot(n_, polynom(n_), 'b--',  alpha=0.6, label=u"Régression polynomiale de degré " + str(order))
+            fit, = plt.plot(n_, polynom(n_), 'b--', alpha=0.6, label=u"Régression polynomiale de degré " + str(order))
             plt.legend(loc='upper left', handles=[points, fit])
         else:
             points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution")
@@ -86,5 +90,5 @@ def benchmark(n, generator, iterations=3, step=10, plot=False, regression=False,
         plt.clf()
         plt.close()
 
-#benchmark(10000,generators.complete_graph_weakparity,iterations=3,step=100,plot=True,regression=True, order=2,path="../figures/")
-#benchmark(400, generators.weak_parity_worst_case, iterations=1, step=10, plot=True, regression=True, order=3, path="../figures/")
+# benchmark(10000,generators.complete_graph_weakparity,iterations=3,step=100,plot=True,regression=True, order=2,path="../figures/")
+# benchmark(400, generators.weak_parity_worst_case, iterations=1, step=10, plot=True, regression=True, order=3, path="../figures/")
