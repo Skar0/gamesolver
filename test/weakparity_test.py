@@ -1,4 +1,4 @@
-from tools import fileHandler as io
+from tools import file_handler as io
 from solvers import weakParity as wp
 
 """

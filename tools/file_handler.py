@@ -1,5 +1,8 @@
 from graph import Graph
 
+"""
+This module handles file reading (to load graph) and writing (to write the solution).
+"""
 
 def load_from_file(path):
     """
