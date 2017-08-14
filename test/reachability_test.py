@@ -2,7 +2,7 @@ from tools import fileHandler as io
 from solvers import reachability as rs
 
 """
-Test class for reachability games.
+Test module for reachability games.
 Some examples are solved by our algorithm and we verify the solution. 
 """
 

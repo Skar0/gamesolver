@@ -2,7 +2,7 @@ from tools import fileHandler as io
 from solvers import weakParity as wp
 
 """
-Test class for weak parity games.
+Test module for weak parity games.
 Some examples are solved by our algorithm and we verify the solution. 
 """
 

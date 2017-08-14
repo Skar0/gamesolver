@@ -2,7 +2,7 @@ from tools import fileHandler as io
 from solvers import strongParity as sp
 
 """
-Test class for strong parity games.
+Test module for strong parity games.
 Some examples are solved by our algorithm and we verify the solution. 
 """
 
