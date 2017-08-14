@@ -1,13 +1,15 @@
 # coding=utf-8
 import argparse
 from benchmarks import reachability_benchmark as r_bench
-from benchmarks import strongParity_benchmark as sp_bench
-from benchmarks import weakParity_benchmark as wp_bench
+from benchmarks import strongparity_benchmark as sp_bench
+from benchmarks import weakparity_benchmark as wp_bench
 from solvers import reachability, weakParity, strongParity
-from tools import fileHandler as tools
+from tools import file_handler as tools
 from tools import generators
 from tools import operations as ops
-
+from test import strongparity_test as sp_test
+from test import weakparity_test as wp_test
+from test import reachability_test as r_test
 
 def command_line_handler():
     """
@@ -146,6 +148,9 @@ def command_line_handler2():
     parser_benchmark.add_argument('-plot', required=False, type=str, action='store', dest='outputPlot',
                                   help='Path to the file in which to save the plot')
 
+    # create the parser for the "test" command
+    parser_test = subparsers.add_parser('test', help='Launches all tests')
+
     return parser.parse_args()
 
 
@@ -220,5 +225,15 @@ def solver2():
         # Strong parity
         else:
             sp_bench.benchmark_worst_case(max, iterations=rep, step=step, plot=plot, path=args.outputPlot)
+
+    elif args.mode == "test":
+        sp_test_result = sp_test.launch_tests()
+        wp_test_result = wp_test.launch_tests()
+        r_test_result = r_test.launch_tests()
+        if(sp_test_result and wp_test_result and r_test_result):
+            print "All tests passed with success"
+        else:
+            print "Some tests failed"
+
 
 solver2()
