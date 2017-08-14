@@ -18,7 +18,7 @@ def benchmark(n, generator, iterations=3, step=10, plot=False, regression=False,
     and delays due to system load). The result as well as a regression can be plotted using matplotlib.
     :param n: number of nodes in generated graph.
     :param generator: graph generator function.
-    :param iterations: number of times the algorithm is timed (default is 10).
+    :param iterations: number of times the algorithm is timed (default is 3).
     :param step: step to be taken in the generation.
     :param plot: if True, plots the data using matplotlib.
     :param regression: if True, plots a polynomial regression along with the data.
