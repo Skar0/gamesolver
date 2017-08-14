@@ -9,7 +9,7 @@ Some examples are solved by our algorithm and we verify the solution.
 
 def figure41():
     """
-    Solves the strong parity game from figure 4.1.
+    Solves the weak parity game from figure 4.1.
     """
     g = io.load_from_file("assets/weak parity/figure41.txt")
     (a, b), (c, d) = wp.weak_parity_solver(g)
