@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 from solvers.strongParity import strongparity_solver2
 from tools import timer, generators
 
+"""
+This module benchmarks the strong parity games.
+"""
+
 
 def benchmark_random(n, iterations=3, step=10, plot=False, path=""):
     """
