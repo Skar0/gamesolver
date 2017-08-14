@@ -51,7 +51,7 @@ def write_solution_to_file(g, solution, player, path):
         f.write("digraph G {\n")
         f.write("splines=true;\nsep=\"+10,10\";\noverlap=scale;\nnodesep=0.6;\n")
         for node in W_0:
-            to_write = str(node) + "[label=\"" + str(node) + " " + str(g.get_node_priority(node)) + "\""
+            to_write = str(node) + "[label=\"v" + str(node) + " " + str(g.get_node_priority(node)) + "\""
             if g.get_node_player(node) == 0:
                 to_write += ",shape=circle"
             elif g.get_node_player(node) == 1:
@@ -76,7 +76,7 @@ def write_solution_to_file(g, solution, player, path):
             f.write(to_write)
 
         for node in W_1:
-            to_write = str(node) + "[label=\"" + str(node) + " " + str(g.get_node_priority(node)) + "\""
+            to_write = str(node) + "[label=\"v" + str(node) + " " + str(g.get_node_priority(node)) + "\""
             if g.get_node_player(node) == 0:
                 to_write += ",shape=circle"
             elif g.get_node_player(node) == 1:
