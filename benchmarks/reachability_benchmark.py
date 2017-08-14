@@ -5,16 +5,21 @@ import matplotlib.pyplot as plt
 from solvers.reachability import reachability_solver_tuples
 from tools import timer, generators
 
+"""
+This module benchmarks the strong parity games.
+"""
+
 
 def benchmark_complete_graph(n, iterations=3, step=10, plot=False, regression=False, path=""):
     """
+    Unused. This was made to compare execution time between players on complete graphs.
     Calls reachability solver for both players and target set [1] on games generated using the complete graph generator.
     Games of size 1 to n by step of #step are solved and a timer records the time taken to get the solution. The solver
     can be timed several times and the minimum value is selected depending on the value of optional parameter iterations
     (to avoid recording time spikes and delays due to system load). Time to solve the game for both players is recorded
-    and printed to the console in a formated way. Both results can be plotted using matplotlib.
+    and printed to the console in a formatted way. Both results can be plotted using matplotlib.
     :param n: number of nodes in generated graph.
-    :param iterations: number of times the algorithm is timed (default is 10).
+    :param iterations: number of times the algorithm is timed (default is 3).
     :param step: step between two sizes of graphs generated.
     :param plot: if True, plots the data using matplotlib.
     :param regression: if True, plots a polynomial regression.
@@ -125,13 +130,14 @@ def benchmark_complete_graph(n, iterations=3, step=10, plot=False, regression=Fa
 
 def benchmark_worst_case(n, iterations=3, step=10, plot=False, regression=False, path=""):
     """
+    Unused. This was made to compare execution time between players on worst case graphs.
     Calls reachability solver for both players and target set [1] on games generated using the worst case graph
     generator. Games of size 1 to n by step of #step are solved and a timer records the time taken to get the solution.
     The solver can be timed several times and the minimum value is selected depending on the value of optional parameter
     iterations (to avoid recording time spikes and delays due to system load). Time to solve the game for both players
-    is recorded and printed to the console in a formated way. Both results can be plotted using matplotlib.
+    is recorded and printed to the console in a formatted way. Both results can be plotted using matplotlib.
     :param n: number of nodes in generated graph.
-    :param iterations: number of times the algorithm is timed (default is 10).
+    :param iterations: number of times the algorithm is timed (default is 3).
     :param step: step between two sizes of graphs generated.
     :param plot: if True, plots the data using matplotlib.
     :param regression: if True, plots a polynomial regression.
@@ -242,14 +248,15 @@ def benchmark_worst_case(n, iterations=3, step=10, plot=False, regression=False,
 
 def benchmark_complete_targetset(n, iterations=3, step=10, plot=False, regression=False, path=""):
     """
+    Unused. This was made to compare execution time between players on graphs where the target set is the set of nodes.
     Calls reachability solver for player 1 on complete graphs where the target set is the set of all nodes. This makes
     the algorithm add all nodes to the queue and all predecessor lists are iterated over.
     Games of size 1 to n by step of #step are solved and a timer records the time taken to get the solution. The solver
     can be timed several times and the minimum value is selected depending on the value of optional parameter iterations
     (to avoid recording time spikes and delays due to system load). Time to solve the game is recorded and printed to
-    the console in a formated way. The result can be plotted using matplotlib.
+    the console in a formatted way. The result can be plotted using matplotlib.
     :param n: number of nodes in generated graph.
-    :param iterations: number of times the algorithm is timed (default is 10).
+    :param iterations: number of times the algorithm is timed (default is 3).
     :param step: step between two sizes of graphs generated.
     :param plot: if True, plots the data using matplotlib.
     :param regression: if True, plots a polynomial regression.
@@ -277,7 +284,7 @@ def benchmark_complete_targetset(n, iterations=3, step=10, plot=False, regressio
 
         # #iterations calls to the solver are timed
 
-        target = range(1,i+1) # target set is the set of all nodes
+        target = range(1, i + 1)  # target set is the set of all nodes
 
         for j in range(iterations):
             with chrono:
@@ -300,7 +307,7 @@ def benchmark_complete_targetset(n, iterations=3, step=10, plot=False, regressio
 
     if plot:
         plt.grid(True)
-        plt.title(u"Graphes complets de taille 1 à "+str(n))
+        plt.title(u"Graphes complets de taille 1 à " + str(n))
         plt.xlabel(u'nombre de nœuds')
         plt.ylabel(u'temps (s)')
         if regression:
@@ -312,20 +319,22 @@ def benchmark_complete_targetset(n, iterations=3, step=10, plot=False, regressio
         else:
             points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution,\nensemble cible : V")
             plt.legend(loc='upper left', handles=[points])
-        plt.savefig(path + "complete_graph" + "_" + str(n) + "nodes_targetallnodes"+ ".png",
+        plt.savefig(path + "complete_graph" + "_" + str(n) + "nodes_targetallnodes" + ".png",
                     bbox_inches='tight')
         plt.clf()
         plt.close()
 
+
 def benchmark(n, generator, t, p, iterations=3, step=10, plot=False, regression=False, order=1, path="", title=""):
     """
-    General benchmarking function. Calls weak parity solver on games generated using the provided generator function.
-    Games of size 1 to n are solved and a timer records the time taken to get the solution. The solver can be timed
-    several times and the minimum value is selected using optional parameter iterations (to avoid recording time spikes
-    and delays due to system load). The result as well as a regression can be plotted using matplotlib.
+    General benchmarking function. Calls reachability solver on games generated using the provided generator function
+    and for provided player and target set. Games of size 1 to n by a certain step are solved and a timer records the
+    time taken to get the solution. The solver can be timed several times and the minimum value is selected using
+    optional parameter iterations (to avoid recording time spikes and delays due to system load). The result as well as
+    a regression can be plotted using matplotlib.
     :param n: number of nodes in generated graph.
     :param generator: graph generator function.
-    :param iterations: number of times the algorithm is timed (default is 10).
+    :param iterations: number of times the algorithm is timed (default is 3).
     :param step: step to be taken in the generation.
     :param plot: if True, plots the data using matplotlib.
     :param regression: if True, plots a polynomial regression along with the data.
@@ -386,8 +395,9 @@ def benchmark(n, generator, t, p, iterations=3, step=10, plot=False, regression=
         if regression:
             coeficients = np.polyfit(n_, y, order)
             polynom = np.poly1d(coeficients)
-            points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution, joueur " + str(p) + u',\nensemble cible ' + str(t))
-            fit, = plt.plot(n_, polynom(n_), 'b--',  alpha=0.6, label=u"Régression polynomiale de degré " + str(order))
+            points, = plt.plot(n_, y, 'g.',
+                               label=u"Temps d'exécution, joueur " + str(p) + u',\nensemble cible ' + str(t))
+            fit, = plt.plot(n_, polynom(n_), 'b--', alpha=0.6, label=u"Régression polynomiale de degré " + str(order))
             plt.legend(loc='upper left', handles=[points, fit])
         else:
             points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution")
@@ -396,16 +406,3 @@ def benchmark(n, generator, t, p, iterations=3, step=10, plot=False, regression=
         plt.savefig(path, bbox_inches='tight')
         plt.clf()
         plt.close()
-
-
-""""
-benchmark(2000, generators.reachability_worstcase_chain2_corr, [1], 0, iterations=2, plot=True, order=1,
-regression=False, step=10, path="../resu/")
-benchmark(1000, generators.reachability_worstcase_chain_optimised,[1],0,iterations=1, step=10,plot=True,
-regression=True, order = 2,path="../resu/")
-
-benchmark_complete_graph(10000,iterations=3,step=100,plot=True, regression=True,path="../resu/")
-
-benchmark_worst_case(10000,iterations=3,step=100,plot=True, regression=True,path="../resu/")
-benchmark_complete_targetset(10000, iterations=3, step=100, plot=True, regression=True, path="../resu/")
-"""
