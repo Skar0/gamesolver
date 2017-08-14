@@ -91,7 +91,7 @@ def reachability_worst_case(n):
     return g
 
 
-def strongParity_worst_case(n):
+def strong_parity_worst_case(n):
     """
     This is a worst case generator for strong parity games yielding an exponential complexity for the algorithm.
     The construction of this type of graph, which contains n*5 nodes can be found in Oliver Friedmann's paper "Recursive
