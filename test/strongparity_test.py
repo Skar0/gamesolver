@@ -11,8 +11,8 @@ def figure56():
     """
     Solves the strong parity game from figure 5.6.
     """
-    fig47_graph = io.load_from_file("assets/strong parity/figure56.txt")
-    (a, b), (c, d) = sp.strongparity_solver2(fig47_graph)
+    fig56_graph = io.load_from_file("assets/strong parity/figure56.txt")
+    (a, b), (c, d) = sp.strongparity_solver2(fig56_graph)
     return (a == [2, 4, 1, 6]) and b == {2: 2, 4: 1} and c == [5, 3] and d == {5: 5}
 
 
