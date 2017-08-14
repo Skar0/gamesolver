@@ -5,15 +5,17 @@ import matplotlib.pyplot as plt
 from solvers.strongParity import strongparity_solver2
 from tools import timer, generators
 
+
 def benchmark_random(n, iterations=3, step=10, plot=False, path=""):
     """
-    Benchmarks the recursive algorithm for strong parity game using a random generator. Calls strong parity solver
-    on games generated using the random generator function.Games of 1 to n are solved and a timer records the
+    This function is unfinished.
+    Benchmarks the recursive algorithm for strong parity games using a random generator. Calls strong parity solver
+    on games generated using the random generator function. Games of 1 to n are solved and a timer records the
     time taken to get the solution.The solver can be timed several times and the minimum value is selected using
     optional parameter iterations (to avoid recording time spikes and delays due to system load). The result can be
     plotted using matplotlib.
     :param n: number of nodes in generated graph.
-    :param iterations: number of times the algorithm is timed (default is 10).
+    :param iterations: number of times the algorithm is timed (default is 3).
     :param step: step to be taken in the generation.
     :param plot: if True, plots the data using matplotlib.
     :param path: path to the file in which to write the result.
@@ -37,9 +39,9 @@ def benchmark_random(n, iterations=3, step=10, plot=False, path=""):
     # games generated are size 1 to n
     for i in range(1, n + 1, step):
         temp = []  # temp list for #iterations recordings
-        prio = randint(0,i) # number of priorities
-        min_out = randint(0,i)
-        max_out =  randint(min_out,i)
+        prio = randint(0, i)  # number of priorities
+        min_out = randint(0, i)
+        max_out = randint(min_out, i)
         g = generators.random(i, prio, min_out, max_out)  # generated game
 
         # #iterations calls to the solver are timed
@@ -76,13 +78,13 @@ def benchmark_random(n, iterations=3, step=10, plot=False, path=""):
 
 def benchmark_worst_case(n, iterations=3, step=10, plot=False, path=""):
     """
-    Benchmarks the recursive algorithm for strong parity game using the worst case generator which yields an
+    Benchmarks the recursive algorithm for strong parity games using the worst case generator which yields an
     exponential complexity. Calls strong parity solver on games generated using the worst case generator function.
     Games of size 5 to 5*n are solved and a timer records the time taken to get the solution.The solver can be timed
     several times and the minimum value is selected using optional parameter iterations (to avoid recording time
     spikes and delays due to system load). The result can be plotted using matplotlib.
     :param n: number of nodes in generated graph (nodes is 5*n due to construction).
-    :param iterations: number of times the algorithm is timed (default is 10).
+    :param iterations: number of times the algorithm is timed (default is 3).
     :param step: step to be taken in the generation.
     :param plot: if True, plots the data using matplotlib.
     :param path: path to the file in which to write the result.
@@ -97,7 +99,7 @@ def benchmark_worst_case(n, iterations=3, step=10, plot=False, path=""):
 
     chrono = timer.Timer(verbose=False)  # Timer object
 
-    info = "Time to solve"  # info about the current benchmark
+    info = "Time to solve (s)"  # info about the current benchmark
 
     # print first line of output
     print u"Generator".center(40) + "|" + u"Nodes (n)".center(12) + "|" + info.center(40) + "\n" + \
@@ -106,7 +108,7 @@ def benchmark_worst_case(n, iterations=3, step=10, plot=False, path=""):
     # games generated are size 1 to n
     for i in range(1, n + 1, step):
         temp = []  # temp list for #iterations recordings
-        g = generators.strongParity_worst_case(i)  # generated game
+        g = generators.strong_parity_worst_case(i)  # generated game
 
         # #iterations calls to the solver are timed
         for j in range(iterations):
@@ -125,20 +127,19 @@ def benchmark_worst_case(n, iterations=3, step=10, plot=False, path=""):
         nbr_generated += 1  # updating the number of generated mesures
 
         # at the end, print total time
-    print "-" * 108 + "\n" + "Total time".center(40) + "|" + "#".center(12) + "|" + \
+    print "-" * 108 + "\n" + "Total (s)".center(40) + "|" + "#".center(12) + "|" + \
           str(total_time).center(40) + "\n" + "-" * 108 + "\n"
 
     if plot:
         plt.grid(True)
-        plt.title(u"Graphes 'pire cas' de taille 5 à " + str(5*n))
+        plt.title(u"Graphes 'pire cas' de taille 5 à " + str(5 * n))
         plt.xlabel(u'nombre de nœuds')
         plt.ylabel(u'temps (s)')
-        #plt.yscale("log")
+        # plt.yscale("log") allows logatithmic y-axis
         points, = plt.plot(n_, y, 'g.', label=u"Temps d'exécution")
         plt.legend(loc='upper left', handles=[points])
         plt.savefig(path, bbox_inches='tight')
         plt.clf()
         plt.close()
 
-#benchmark_worst_case(30, iterations=3, step=1, plot=True)
-
+# benchmark_worst_case(30, iterations=3, step=1, plot=True)
