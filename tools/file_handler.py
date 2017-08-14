@@ -69,7 +69,7 @@ def write_solution_to_file(g, solution, player, path):
 
                 if succ == sigma_0[node]:
                     to_write += '[color=blue3];\n'
-                elif succ == sigma_0[node]:
+                elif succ == sigma_1[node]:
                     to_write += '[color=forestgreen];\n'
                 else:
                     to_write += ";\n"
