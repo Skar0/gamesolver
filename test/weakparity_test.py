@@ -1,5 +1,5 @@
 from tools import file_handler as io
-from solvers import weakParity as wp
+from solvers import weakparity as wp
 
 """
 Test module for weak parity games.

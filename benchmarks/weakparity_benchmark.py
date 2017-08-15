@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from solvers.weakParity import weak_parity_solver
+from solvers.weakparity import weak_parity_solver
 from tools import timer
 
 """
