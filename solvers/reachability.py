@@ -19,32 +19,33 @@ def init_out(g):
 
 def reachability_solver(g, U, j):
     """
-    Reachability games solver. This function computes Att_j^g(U), the attractor for player j of target set U over the
-    game g. That attractor is the winning region of player j for the reachability game associated to the attractor. The
-    rest of the nodes are part of the winning region of player j bar (player j's opponent). Winning regions and
+    Reachability games solver. This function computes Att_j^g(U), the attractor for player j of target set U in the
+    game g. That attractor is the winning region of player j who has the reachability objective in the game. The
+    rest of the nodes are part of the winning region of player jbar (player j's opponent). Winning regions and
     strategies are computed and returned by the algorithm. The winning regions and strategies are return as two tuples
-    to ressemble pseudo-code and facilitate weak and strong parity readability.
+    to resemble pseudo-code and facilitate weak and strong parity solvers readability.
     :param g: the game graph.
     :param U: the target set.
-    :param j: the player.
+    :param j: the player with the reachability objective.
     :return: two tuples : (w_j, strat_j), (w_jbar, strat_jbar) where w_j and w_jbar are lists containing nodes of their
     respective winning regions and where strat_j and strat_jbar are dictionaries containing winning strategies.
     """
     out = init_out(g)  # init out
     queue = deque()  # init queue (deque is part of standard library and allows O(1) append() and pop() at either end)
-    regions = defaultdict(lambda: -1)  # init marq, better access time than using the player's region list to check if
-                                       # node is already in the attractoir
-    region_j = []  #winning nodes of j
-    region_opponent = []  #winning node of j bar
+    # this dictionary is used to know if a node belongs to a winning region without
+    # iterating over both winning regions lists (we can check in O(1) in average)
+    regions = defaultdict(lambda: -1)
+    region_j = []  # winning region of j
+    region_opponent = []  # winning region of j bar
     strat_j = defaultdict(lambda: -1)  # init strat for player j
-    strat_opponent = defaultdict(lambda: -1)  #init strat for player jbar
-    opponent = op.opponent(j)  # player j's opponent (j bar)
+    strat_opponent = defaultdict(lambda: -1)  # init strat for player jbar
+    opponent = op.opponent(j)  # player j's opponent (jbar)
 
     # for each node in the target set U
     for node in U:
         queue.append(node)  # add node to the end of the queue
-        regions[node] = j  # set its regions to j (node is winning for j because it belongs to the attractor)
-        region_j.append(node)
+        regions[node] = j  # set its regions to j (node is winning for j because reachability objective is satisfied)
+        region_j.append(node)  # add the node to the winning region list of j
         # if node belongs to j, set an arbitrary strategy for that node (we chose to select first successor)
         if g.get_node_player(node) == j:
             strat_j[node] = g.get_successors(node)[0]
@@ -53,9 +54,8 @@ def reachability_solver(g, U, j):
     while queue:
         s = queue.popleft()  # remove and return node on the left side of the queue (first in, first out)
 
-        # print("considering node "+str(s))
+        # iterating over the predecessors of node s
         for sbis in g.get_predecessors(s):
-            # print("--considering predecessor " + str(sbis)+" "+str(g.get_node_player(sbis)))
             if regions[sbis] == -1:  # if sbis is not yet visited, its region is -1 by default
                 if g.get_node_player(sbis) == j:
                     # belongs to j, set regions and strategy accordingly
@@ -71,8 +71,6 @@ def reachability_solver(g, U, j):
                         queue.append(sbis)
                         regions[sbis] = j
                         region_j.append(sbis)
-                        # print("---- current regions "+str(g.get_regions()))
-                        # print("---- current strat "+str(g.get_strategies()))
 
     # for each node that is not marked we set its region to the opponent and find a successor for the strategy
     for node in g.get_nodes():
@@ -83,6 +81,5 @@ def reachability_solver(g, U, j):
                 for successor in g.get_successors(node):
                     if regions[successor] != j:
                         strat_opponent[node] = successor
-                        # print("---- current regions " + str(g.get_regions()))
-                        # print("---- current strat " + str(g.get_strategies()))
-    return (region_j,strat_j), (region_opponent, strat_opponent)
+
+    return (region_j, strat_j), (region_opponent, strat_opponent)
