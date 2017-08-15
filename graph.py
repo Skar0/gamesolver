@@ -3,23 +3,19 @@ from collections import defaultdict
 
 class Graph(object):
     """
-    Class holding the data structure representing the graph and implementing a few useful operations
+    Class holding the data structure representing the game graph and implementing a few useful operations on that graph.
     """
 
     def __init__(self):
         """
-        Graphs are represented by predecessor list (a dictionary whose keys are the nodes and values are a list of
-        successors of a nodes). Access in a dictionnary is O(1) in average and O(n) in worst case because it uses a
-        hash table. Python lists provide O(1) retrieval. Nodes are stored in a dictionary with the key being the node id
-        and the value being the priority of the node (which defaults to 0 if none is provided).
+        Graphs are represented by predecessors list (a dictionary whose keys are the nodes and values are a list of
+        successors of a nodes). Access in a dictionary is O(1) in average and O(n) in worst case because it uses a
+        hash table. Python lists provide O(1) retrieval. The same applies to successors list. Nodes are stored in a
+        dictionary where the key is the node id and the value is a tuple (player, priority).
         """
         self.predecessors = defaultdict(list)
         self.successors = defaultdict(list)
         self.nodes = defaultdict(tuple)
-
-        # TODO remove as this is created by the solving algorithms
-        self.regions = defaultdict(lambda: -1)
-        self.strategies = defaultdict(lambda: -1)
 
     def get_nodes(self):
         return self.nodes.keys()
@@ -29,24 +25,6 @@ class Graph(object):
 
     def get_node_priority(self, node):
         return self.nodes[node][1]
-
-    def get_regions(self):
-        return self.regions
-
-    def get_node_region(self, node):
-        return self.regions[node]
-
-    def set_node_region(self, node, player):
-        self.regions[node] = player
-
-    def get_node_strategy(self, node):
-        return self.strategies[node]
-
-    def set_node_strategy(self, node, move):
-         self.strategies[node] = move
-
-    def get_strategies(self):
-        return self.strategies
 
     def add_node(self, node, info):
         self.nodes[node] = info
@@ -73,6 +51,11 @@ class Graph(object):
         self.predecessors[node].remove(predecessor)
 
     def subgame(self, set):
+        """
+        Creates a subgame from the current game. The subgame will contain all nodes in the provided set.
+        :param set: the list of nodes that the subgame will contain.
+        :return: a subgame.
+        """
         sub = self.__class__()
         for n in set:
             sub.nodes[n] = self.nodes[n]
@@ -86,8 +69,8 @@ class Graph(object):
     def __str__(self):
         rep = ""
         for node in self.nodes:
-            rep+=str(node)+" "+str(self.nodes[node])+"\n"+str(node)+" -> "
+            rep += str(node) + " " + str(self.nodes[node]) + "\n" + str(node) + " -> "
             for succ in self.successors[node]:
-                rep+= str(succ)+", "
-            rep+="\n"
+                rep += str(succ) + ", "
+            rep += "\n"
         return rep
