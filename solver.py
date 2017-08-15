@@ -11,6 +11,7 @@ from test import strongparity_test as sp_test
 from test import weakparity_test as wp_test
 from test import reachability_test as r_test
 
+
 def command_line_handler():
     """
     This function parses the arguments given in the command line using python's argparse module. A special format of
@@ -31,8 +32,10 @@ def command_line_handler():
 
     # create the parser for the "solve" command
     parser_solve = subparsers.add_parser('solve', help='Solve a game')
-    parser_solve.add_argument('-i', required=True, type=str, action='store', dest='inputFile', help='Input path for the arena file')
-    parser_solve.add_argument('-o', required=False, type=str, action='store', dest='outputFile', help='Output path for the solution')
+    parser_solve.add_argument('-i', required=True, type=str, action='store', dest='inputFile',
+                              help='Input path for the arena file')
+    parser_solve.add_argument('-o', required=False, type=str, action='store', dest='outputFile',
+                              help='Output path for the solution')
 
     # create the parser for the "benchmark" command
     parser_benchmark = subparsers.add_parser('bench', help='Benchmark selected algorithm')
@@ -40,7 +43,8 @@ def command_line_handler():
                                   help='Number of iterations')
     parser_benchmark.add_argument('-step', required=True, type=int, action='store', dest='s',
                                   help='Steps taken by the benchmarker (1 = test all sizes from 1 to iter)')
-    parser_benchmark.add_argument('-plot', required=False, type=str, action='store', dest='outputPlot', help='Output path for the plot')
+    parser_benchmark.add_argument('-plot', required=False, type=str, action='store', dest='outputPlot',
+                                  help='Output path for the plot')
 
     return parser.parse_args()
 
@@ -56,21 +60,21 @@ def solver():
     if args.mode == "solve":
         """ ----- Solving mode ----- """
         g = tools.load_from_file(args.inputFile)  # loading game from the input file
-        player = 0 # default player is 0, so solution comes as (W_0,sigma_0), (W_1,sigma_1)
+        player = 0  # default player is 0, so solution comes as (W_0,sigma_0), (W_1,sigma_1)
 
         # Reachability (target and player is set)
         if args.target is not None:
             player = int(args.target[0])  # getting player (as int)
             target = map(int, args.target[1].split(","))  # getting targets (transforming them into ints)
             solution = reachability.reachability_solver_tuples(g, target,
-                                                        player)  # calling reachability solver on the game
-            ops.print_solution(solution,player)
+                                                               player)  # calling reachability solver on the game
+            ops.print_solution(solution, player)
 
 
         # Weak parity
         elif args.wp:
             solution = weakParity.weak_parity_solver(g)  # calling weak parity solver on the game
-            ops.print_solution(solution,player)
+            ops.print_solution(solution, player)
 
         # Strong parity
         else:
@@ -88,10 +92,11 @@ def solver():
 
         # Reachability
         if args.target is not None:
-            print u"Générateur".center(30)+"|"+u"Noeuds (n)".center(12)+"|"+"Arcs (m)".center(10)+"|"\
-                       +u"Atteignabilité (joueur 1)".center(28)+"|"+u"Atteignabilité (joueur 2)".center(28)+"\n"+\
-                           "-"*108+"\n"
-            r_bench.benchmark(iter, generators.complete_graph2, [1], 1, iterations=3, plot=True,order=1,regression=True, step=100)
+            print u"Générateur".center(30) + "|" + u"Noeuds (n)".center(12) + "|" + "Arcs (m)".center(10) + "|" \
+                  + u"Atteignabilité (joueur 1)".center(28) + "|" + u"Atteignabilité (joueur 2)".center(28) + "\n" + \
+                  "-" * 108 + "\n"
+            r_bench.benchmark(iter, generators.complete_graph2, [1], 1, iterations=3, plot=True, order=1,
+                              regression=True, step=100)
 
         # Weak parity
         elif args.wp:
@@ -99,7 +104,8 @@ def solver():
         else:
             pass  # bench sp
 
-#solver()
+
+# solver()
 
 def command_line_handler2():
     """
@@ -110,8 +116,8 @@ def command_line_handler2():
     parser = argparse.ArgumentParser(description='Reachability, weak parity and strong parity solver.')
 
     subparsers = parser.add_subparsers(title='Mode selection',
-                                       description='This program can solve a given game in PGSolver format (solve) or '
-                                                   'benchmark the algorithm used to solve a given game (benchmark)',
+                                       description='This program can solve a given game in PGSolver format (solve),  '
+                                                   'benchmark the algorithm used to solve a given game (bench) or run unit tests (test)',
                                        help='Solving mode or benchmarking mode', dest='mode')
 
     # create the parser for the "solve" command
@@ -120,7 +126,7 @@ def command_line_handler2():
     # adding the game options (mutually exclusive and required)
     group_solve = parser_solve.add_mutually_exclusive_group(required=True)
     group_solve.add_argument('-r', type=str, action='store', dest='target', nargs=2,
-                       help='Solve a reachability game for a PLAYER and a TARGET', metavar=('PLAYER', 'TARGET'))
+                             help='Solve a reachability game for a PLAYER and a TARGET', metavar=('PLAYER', 'TARGET'))
     group_solve.add_argument('-wp', action='store_true', help='Solve a weak parity game')
     group_solve.add_argument('-sp', action='store_true', help='Solve a strong parity game')
 
@@ -172,18 +178,18 @@ def solver2():
             player = int(args.target[0])  # getting player (as int), replacing default player
             target = map(int, args.target[1].split(","))  # getting node ids in target (transforming them into int)
             solution = reachability.reachability_solver_tuples(g, target, player)  # calling reachability solver
-            ops.print_solution(solution, player) # printing the solution
+            ops.print_solution(solution, player)  # printing the solution
 
 
         # Weak parity
         elif args.wp:
             solution = weakParity.weak_parity_solver(g)  # calling weak parity solver on the game
-            ops.print_solution(solution, player) # printing the solution
+            ops.print_solution(solution, player)  # printing the solution
 
         # Strong parity
         else:
             solution = strongParity.strongparity_solver2(g)  # calling strong parity solver on the game
-            ops.print_solution(solution, player) # printing the solution
+            ops.print_solution(solution, player)  # printing the solution
 
         # If output option chosen
         if args.outputFile is not None:
@@ -199,28 +205,28 @@ def solver2():
         # Reachability
         if args.reachability_type is not None:
             if args.reachability_type == 'complete0':
-                r_bench.benchmark(max,generators.complete_graph, [1], 0, iterations=rep, step = step, plot = plot,
-                                  regression=True, order = 2,path=args.outputPlot,
-                                  title=u"Graphes complets de taille 1 à "+str(max))
+                r_bench.benchmark(max, generators.complete_graph, [1], 0, iterations=rep, step=step, plot=plot,
+                                  regression=True, order=2, path=args.outputPlot,
+                                  title=u"Graphes complets de taille 1 à " + str(max))
             elif args.reachability_type == 'complete1':
-                r_bench.benchmark(max,generators.complete_graph, [1], 1, iterations=rep, step = step, plot = plot,
-                                  regression=True, order = 2,path=args.outputPlot,
-                                  title=u"Graphes complets de taille 1 à "+str(max))
+                r_bench.benchmark(max, generators.complete_graph, [1], 1, iterations=rep, step=step, plot=plot,
+                                  regression=True, order=2, path=args.outputPlot,
+                                  title=u"Graphes complets de taille 1 à " + str(max))
             elif args.reachability_type == 'worstcase':
-                r_bench.benchmark(max,generators.reachability_worst_case, [1], 0, iterations=rep, step = step,
-                                  plot = plot, regression=True, order = 2,path=args.outputPlot,
-                                  title=u"Graphes 'pire cas' de taille 1 à "+str(max))
+                r_bench.benchmark(max, generators.reachability_worst_case, [1], 0, iterations=rep, step=step,
+                                  plot=plot, regression=True, order=2, path=args.outputPlot,
+                                  title=u"Graphes 'pire cas' de taille 1 à " + str(max))
 
         # Weak parity
         elif args.weakparity_type is not None:
             if args.weakparity_type == 'complete':
                 wp_bench.benchmark(max, generators.complete_graph_weakparity, iterations=rep, step=step, plot=plot,
                                    regression=True, order=2, path=args.outputPlot,
-                                   title=u"Graphes complets de taille 1 à "+str(max))
+                                   title=u"Graphes complets de taille 1 à " + str(max))
             elif args.weakparity_type == 'worstcase':
                 wp_bench.benchmark(max, generators.weak_parity_worst_case, iterations=rep, step=step, plot=plot,
                                    regression=True, order=3, path=args.outputPlot,
-                                   title=u"Graphes 'pire cas' de taille 1 à "+str(max))
+                                   title=u"Graphes 'pire cas' de taille 1 à " + str(max))
 
         # Strong parity
         else:
@@ -230,7 +236,7 @@ def solver2():
         sp_test_result = sp_test.launch_tests()
         wp_test_result = wp_test.launch_tests()
         r_test_result = r_test.launch_tests()
-        if(sp_test_result and wp_test_result and r_test_result):
+        if (sp_test_result and wp_test_result and r_test_result):
             print "All tests passed with success"
         else:
             print "Some tests failed"
