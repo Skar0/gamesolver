@@ -2,7 +2,7 @@
 from random import randint
 import matplotlib.pyplot as plt
 
-from solvers.strongParity import strongparity_solver2
+from solvers.strongparity import strong_parity_solver
 from tools import timer, generators
 
 """
@@ -51,7 +51,7 @@ def benchmark_random(n, iterations=3, step=10, plot=False, path=""):
         # #iterations calls to the solver are timed
         for j in range(iterations):
             with chrono:
-                strongparity_solver2(g)  # solver call
+                strong_parity_solver(g)  # solver call
             temp.append(chrono.interval)  # add time recording
 
         min_recording = min(temp)
@@ -117,7 +117,7 @@ def benchmark_worst_case(n, iterations=3, step=10, plot=False, path=""):
         # #iterations calls to the solver are timed
         for j in range(iterations):
             with chrono:
-                strongparity_solver2(g)  # solver call
+                strong_parity_solver(g)  # solver call
             temp.append(chrono.interval)  # add time recording
 
         min_recording = min(temp)

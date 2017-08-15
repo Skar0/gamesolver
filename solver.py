@@ -3,7 +3,7 @@ import argparse
 from benchmarks import reachability_benchmark as r_bench
 from benchmarks import strongparity_benchmark as sp_bench
 from benchmarks import weakparity_benchmark as wp_bench
-from solvers import reachability, weakparity, strongParity
+from solvers import reachability, weakparity, strongparity
 from tools import file_handler as tools
 from tools import generators
 from tools import operations as ops
@@ -93,7 +93,7 @@ def solver():
 
         # Strong parity
         else:
-            solution = strongParity.strongparity_solver2(g)  # calling strong parity solver on the game
+            solution = strongparity.strong_parity_solver(g)  # calling strong parity solver on the game
             ops.print_solution(solution, player)  # printing the solution
 
         # If output option chosen
