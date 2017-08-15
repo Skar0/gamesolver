@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from solvers.reachability import reachability_solver_tuples
+from solvers.reachability import reachability_solver
 from tools import timer, generators
 
 """
@@ -51,12 +51,12 @@ def benchmark_complete_graph(n, iterations=3, step=10, plot=False, regression=Fa
         # #iterations calls to the solver are timed
         for j in range(iterations):
             with chrono:
-                (W_0, sigma_0), (W_1, sigma_1) = reachability_solver_tuples(g, [1], 0)  # solver call player 0
+                (W_0, sigma_0), (W_1, sigma_1) = reachability_solver(g, [1], 0)  # solver call player 0
             temp_p0.append(chrono.interval)  # add time recording
 
         for j in range(iterations):
             with chrono:
-                (W_1, sigma_1), (W_0, sigma_0) = reachability_solver_tuples(g, [1], 1)  # solver call player 1
+                (W_1, sigma_1), (W_0, sigma_0) = reachability_solver(g, [1], 1)  # solver call player 1
             temp_p1.append(chrono.interval)  # add time recording
 
         min_recording_p0 = min(temp_p0)
@@ -169,12 +169,12 @@ def benchmark_worst_case(n, iterations=3, step=10, plot=False, regression=False,
         # #iterations calls to the solver are timed
         for j in range(iterations):
             with chrono:
-                (W_0, sigma_0), (W_1, sigma_1) = reachability_solver_tuples(g, [1], 0)  # solver call player 0
+                (W_0, sigma_0), (W_1, sigma_1) = reachability_solver(g, [1], 0)  # solver call player 0
             temp_p0.append(chrono.interval)  # add time recording
 
         for j in range(iterations):
             with chrono:
-                (W_1, sigma_1), (W_0, sigma_0) = reachability_solver_tuples(g, [1], 1)  # solver call player 1
+                (W_1, sigma_1), (W_0, sigma_0) = reachability_solver(g, [1], 1)  # solver call player 1
             temp_p1.append(chrono.interval)  # add time recording
 
         min_recording_p0 = min(temp_p0)
@@ -288,7 +288,7 @@ def benchmark_complete_targetset(n, iterations=3, step=10, plot=False, regressio
 
         for j in range(iterations):
             with chrono:
-                reachability_solver_tuples(g, target, 1)  # solver call
+                reachability_solver(g, target, 1)  # solver call
             temp.append(chrono.interval)  # add time recording
 
         min_recording = min(temp)
@@ -366,7 +366,7 @@ def benchmark(n, generator, t, p, iterations=3, step=10, plot=False, regression=
         # #iterations calls to the solver are timed
         for j in range(iterations):
             with chrono:
-                reachability_solver_tuples(g, t, p)  # solver call
+                reachability_solver(g, t, p)  # solver call
             temp.append(chrono.interval)  # add time recording
 
         min_recording = min(temp)

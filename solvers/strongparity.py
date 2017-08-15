@@ -33,7 +33,7 @@ def strong_parity_solver(g):
         U = ops.i_priority_node(g, i)  # target set for the attractor : nodes of priority i
 
         # getting the attractor A and the attractor strategy tau and discarding the region and strategy for the opponent
-        (A, tau1), (discard1, discard2) = reachability.reachability_solver_tuples(g, U, j)
+        (A, tau1), (discard1, discard2) = reachability.reachability_solver(g, U, j)
 
         # The subgame G\A is composed of the nodes not in the attractor, thus the nodes of the opposite player's region
         G_A = g.subgame(discard1)
@@ -65,7 +65,7 @@ def strong_parity_solver(g):
                 strat2.update(sig_j)
         else:
             # compute attractor B and strategy nu
-            (B, nu), (discard1, discard2) = reachability.reachability_solver_tuples(g, W_jbar, opponent)
+            (B, nu), (discard1, discard2) = reachability.reachability_solver(g, W_jbar, opponent)
             # The subgame G\B is composed of the nodes not in the attractor, so of the opposite player's winning region
             G_B = g.subgame(discard1)
 

@@ -24,7 +24,7 @@ def weak_parity_solver(g):
         current_player = k % 2  # get current player
 
         # calling the reachability solver on the game h with target set "nodes of priority k" and for the current player
-        (Ak, eta), (Bk, nu) = rs.reachability_solver_tuples(h, ops.i_priority_node(h, k), current_player)
+        (Ak, eta), (Bk, nu) = rs.reachability_solver(h, ops.i_priority_node(h, k), current_player)
 
         # depending on the current player, we add the nodes of Ak in a winning region and update strategies
         if current_player == 0:

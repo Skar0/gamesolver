@@ -82,7 +82,7 @@ def solver():
         if args.target is not None:
             player = int(args.target[0])  # getting player (as int), replacing default player
             target = map(int, args.target[1].split(","))  # getting node ids in target (transforming them into int)
-            solution = reachability.reachability_solver_tuples(g, target, player)  # calling reachability solver
+            solution = reachability.reachability_solver(g, target, player)  # calling reachability solver
             ops.print_solution(solution, player)  # printing the solution
 
 
