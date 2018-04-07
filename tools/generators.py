@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, sample, choice
 
 from graph import Graph
 
@@ -58,7 +58,7 @@ def weak_parity_worst_case(n):
 
     # create n nodes belonging to player 1
     for i in range(1, n + 1):
-        g.add_node(i, (1, 4 * i))
+        g.add_node(i, (1, 2 * i))
         g.successors[i] = range(1, n + 1)
         g.predecessors[i] = range(1, n + 1)
 
@@ -179,24 +179,55 @@ def random(n, p, i, o):
     :param p: number of priorities.
     :param i: min outdegree.
     :param o: max outdegree.
-    :return: a random game.
+    :return: a random game graph.
     """
+    nodes = [x for x in xrange(n)]
     g = Graph()
     for node in range(0, n):
         g.add_node(node, (randint(0, 1), randint(0, p)))
-        notself = False
-        for h in range(i, o + 1):
-            found = False
-            while not found:
-                succ = randint(0, n)
-                if not notself:
-                    if succ != node:
-                        g.add_successor(node, succ)
-                        g.add_predecessor(succ, node)
-                        found = True
-                        notself = True
-                if notself and succ not in g.successors[node]:
-                    g.add_successor(node, succ)
-                    g.add_predecessor(succ, node)
-                    found = True
+    # Create two partitions, S and T. Initially store all nodes in S.
+    S, T = set(nodes), set()
+
+    # Randomly select a first node, and place it in T.
+    node_s = sample(S, 1).pop()
+    S.remove(node_s)
+    T.add(node_s)
+
+    # Create a random connected graph.
+    while S:
+        # Select random node from S, and another in T.
+        node_s, node_t = sample(S, 1).pop(), sample(T, 1).pop()
+        # Create an edge between the nodes, and move the node from S to T.
+        g.add_predecessor(node_t, node_s)
+        g.add_successor(node_s, node_t)
+        S.remove(node_s)
+        T.add(node_s)
+
+    for node in range(0, n):
+        num = randint(i, o)
+        edges_added = 0
+        while edges_added < num:
+            to = choice(nodes)
+            if not (to in g.get_successors(node)):
+                g.add_successor(node, to)
+                g.add_predecessor(to, node)
+                edges_added+=1
     return g
+
+def ladder(n):
+    """
+    Ladder game graphs as described in PGSolver.
+    :param n: number of nodes.
+    :return: a ladder game graph.
+    """
+    g = Graph()
+    for node in range(0, 2*n):
+        g.add_node(node, (node%2, node%2))
+    for v in range(0, 2 * n):
+        for w in range(0, 2 * n):
+            if (v+1)%(2*n) == w%(2*n) or (v+2)%(2*n) == w%(2*n):
+                g.add_successor(v, w)
+                g.add_predecessor(w, v)
+    return g
+
+
