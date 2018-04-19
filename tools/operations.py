@@ -38,6 +38,31 @@ def max_priority(g):
     return max(nodes.iteritems(), key=lambda (k, v): v[1])[1][1]
 
 
+def i_priority_node_non_removed(g, i, removed):
+    """
+    Returns all nodes of priority i in game graph g considering the removed nodes.
+    :param removed: the removed nodes.
+    :param g: the game graph.
+    :param i: the requested priority.
+    :return: a list of nodes of priority i in g except for the removed nodes.
+    """
+    nodes = {k: v for k, v in g.nodes.iteritems() if not removed[k]}
+    # get all node indexes in node tuple (index, (node_player, node_priority)) when node_priority is i
+    return [k for k, v in nodes.iteritems() if v[1] == i]
+
+
+def max_priority_non_removed(g, removed):
+    """
+    Returns the maximum priority occurring in game graph g, considering the removed nodes.
+    :param removed: the removed nodes.
+    :param g: a game graph.
+    :return: the maximum priority in g except for the removed nodes.
+    """
+    nodes = {k: v for k, v in g.nodes.iteritems() if not removed[k]}
+    # get maximum node tuple (index, (node_player, node_priority)) according to its priority, then select its priority
+    return max(nodes.iteritems(), key=lambda (k, v): v[1])[1][1]
+
+
 def update_strategy(strat1, strat2):
     """
     Updates strategy 1 by adding key/value pairs of strategy 2.
