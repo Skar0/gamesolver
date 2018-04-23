@@ -27,6 +27,19 @@ def i_priority_node(g, i):
     return [k for k, v in nodes.iteritems() if v[1] == i]
 
 
+def i_priority_node_function_j(g, i, j):
+    """
+    Returns all nodes of priority i in game graph g.
+    :param j: the priority function number
+    :param g: the game graph.
+    :param i: the requested priority.
+    :return: a list of nodes of priority i in g.
+    """
+    nodes = g.nodes  # Nodes from g
+    # get all node indexes in node tuple (index, (node_player, node_priority)) when node_priority is i
+    return [k for k, v in nodes.iteritems() if v[j] == i]
+
+
 def max_priority(g):
     """
     Returns the maximum priority occurring in game graph g.
