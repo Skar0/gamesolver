@@ -215,4 +215,9 @@ def attractor(g, U, j):
                         queue.append(sbis)
                         regions[sbis] = j
                         W.append(sbis)
-    return W
+
+    Wbis = []
+    for node in g.get_nodes():
+            if regions[node] != j:
+                Wbis.append(node)
+    return W, Wbis
