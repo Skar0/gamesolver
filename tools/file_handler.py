@@ -30,6 +30,32 @@ def load_from_file(path):
 
     return g
 
+def load_generalized_from_file(path):
+    """
+    Loads a game graph from a file specified by the path.
+    The file must be in PGSolver format.
+    :param path: path to the file.
+    :return: a Graph g corresponding to the game graph in the file.
+    """
+    with open(path, 'r') as f:
+        g = Graph()
+        next(f)
+        for line in f:
+            split_line = line.split(" ")
+            node = int(split_line[0])
+            priorities = []
+            for prio in split_line[1].split(","):
+                priorities += [int(prio)]
+            if split_line[2] == "0":
+                g.add_node(node, tuple([0]+priorities))
+            else:
+                g.add_node(node, tuple([1]+priorities))
+
+            for succ in split_line[3].split(","):
+                g.add_successor(node, int(succ))
+                g.add_predecessor(int(succ), node)
+
+    return g
 
 def write_solution_to_file(g, solution, player, path):
     """
