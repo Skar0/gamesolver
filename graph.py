@@ -17,6 +17,9 @@ class Graph(object):
         self.successors = defaultdict(list)
         self.nodes = defaultdict(tuple)
 
+    def get_nodes_descriptors(self):
+        return self.nodes
+
     def get_nodes(self):
         return self.nodes.keys()
 
@@ -25,6 +28,15 @@ class Graph(object):
 
     def get_node_priority(self, node):
         return self.nodes[node][1]
+
+    def get_node_priority_function_i(self, node,i):
+        """
+        Retrieves the priority of a node according to priority function i.
+        :param node: the node id
+        :param i: the priority function (1 to k)
+        :return: the priority alpha_i(node)
+        """
+        return self.nodes[node][i]
 
     def add_node(self, node, info):
         self.nodes[node] = info
