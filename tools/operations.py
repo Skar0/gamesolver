@@ -1,6 +1,9 @@
 """
 This module contains general-purpose functions used in several of our algorithms.
 """
+import ctypes
+import collections
+from antichains.library_linker import createGraph_c, addEdge_c, displayGraph_c
 
 
 def opponent(j):
@@ -109,3 +112,78 @@ def print_solution(solution, player):
     print "Winning strategy of player 1 :"
     for key, value in sigma_1.iteritems():
         print " " + str(key) + " -> " + str(value)
+
+
+def transform_graph_into_c(g):
+    """
+    Transforms a Graph object to a graph structure in c using the c library.
+    :param g: a game graph.
+    :return: a game graph in c format and the number of nodes in that graph.
+    """
+    # nbr of nodes in the graph is needed by the c structure
+    nbr_nodes = len(g.get_nodes())
+    # the c structure needs players (0 for player 0 and 1 for player 1) and priorities
+    priorities = [0]*nbr_nodes
+    players = [0]*nbr_nodes
+
+    # need to create every node before creating the edges. /!\ nodes are numbered from 0 to nbr_nodes-1 in the C struct
+    for node in g.get_nodes():
+        priorities[node-1] = g.nodes[node][1]
+        players[node-1] = g.nodes[node][0]
+
+    # creating the c graph
+    dir_graph = createGraph_c(nbr_nodes,(ctypes.c_int * len(priorities))(*priorities),(ctypes.c_int * len(players))(*players))
+
+    # adding every edge
+    for node in g.get_nodes():
+        for succ in g.get_successors(node):
+            #print("From "+str(node-1)+" to "+str(succ-1))
+            addEdge_c(dir_graph, node-1, succ-1)
+
+    #displayGraph_c(dir_graph)
+
+    return dir_graph, nbr_nodes
+
+def transform_graph_into_c_spec(g):
+    """
+    Transforms a Graph object to a graph structure in c using the c library.
+    :param g: a game graph.
+    :return: a game graph in c format and the number of nodes in that graph.
+    """
+    # nbr of nodes in the graph is needed by the c structure
+    nbr_nodes = len(g.get_nodes())
+    # the c structure needs players (0 for player 0 and 1 for player 1) and priorities
+    priorities = [0]*nbr_nodes
+    players = [0]*nbr_nodes
+
+    # need to create every node before creating the edges. /!\ nodes are numbered from 0 to nbr_nodes-1 in the C struct
+    #print(nbr_nodes)
+    #print(g.get_nodes())
+    for node in g.get_nodes():
+        #print(node)
+        #print(g.nodes[node])
+        priorities[node] = g.nodes[node][1]
+        players[node] = g.nodes[node][0]
+
+    # creating the c graph
+    dir_graph = createGraph_c(nbr_nodes,(ctypes.c_int * len(priorities))(*priorities),(ctypes.c_int * len(players))(*players))
+
+    # adding every edge
+    for node in g.get_nodes():
+        for succ in g.get_successors(node):
+            #print("From "+str(node-1)+" to "+str(succ-1))
+            addEdge_c(dir_graph, node, succ)
+
+    #displayGraph_c(dir_graph)
+
+    return dir_graph, nbr_nodes
+
+def are_lists_equal(list1, list2):
+    """
+    Checks whether two lists are equal (contain exactly the same elements).
+    Using Counter data structure allows duplicates to be considered i.e. [1, 1, 2]  != [1, 2].
+    :param list1: the first list.
+    :param list2: the second list.
+    :return: true if the two lists contain exactly the same elements.
+    """
+    return collections.Counter(list1) == collections.Counter(list2)
