@@ -1,5 +1,7 @@
 from random import randint, sample, choice
 
+import copy
+
 from graph import Graph
 
 """
@@ -229,5 +231,48 @@ def ladder(n):
                 g.add_successor(v, w)
                 g.add_predecessor(w, v)
     return g
+
+def multiple_priorities(g,n):
+    """
+    Takes a parity game graph and returns a generalized parity game graph which corresponds exactly to
+    the same game graph, with every priority function being the same as the one in the parity game graph.
+    :param g: a parity game graph.
+    :param n: the number of priority functions required in the generalized game.
+    :return: a generalized parity game graph.
+    """
+    new = copy.deepcopy(g)
+    for node in new.get_nodes():
+        prev = new.nodes[node] # tuple (player, priority)
+        new.nodes[node] = tuple([prev[0]]+n*[prev[1]])
+    return new
+
+def opposite_priorities(g):
+    """
+    Takes a parity game graph and returns a generalized parity game graph which corresponds exactly to
+    the same game graph except there are two priority function. The first one is the same as in g and the
+    second one is complemented.
+    :param g: a parity game graph.
+    :return: a generalized parity game graph.
+    """
+    new = copy.deepcopy(g)
+    for node in new.get_nodes():
+        prev = new.nodes[node] # tuple (player, priority)
+        new.nodes[node] = tuple([prev[0]]+[prev[1]]+[prev[1]+1])
+    return new
+
+
+"""
+import file_handler as io
+fig56_graph = io.load_from_file("../assets/strong parity/figure56.txt")
+
+test = opposite_priorities(fig56_graph)
+print(fig56_graph.successors)
+print(fig56_graph.nodes)
+print("----------")
+print(test.successors)
+print(test.nodes)
+"""
+
+
 
 
