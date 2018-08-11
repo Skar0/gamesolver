@@ -6,6 +6,7 @@ import reachability
 from antichains.library_linker import winning_region_c
 from graph import Graph
 from tools import operations as ops
+from tools.operations import transform_graph_into_c_spec, transform_generalized_graph_into_c, transform_graph_into_c
 
 
 def strong_parity_solver(g):
@@ -306,6 +307,16 @@ def strong_parity_solver_non_removed(g, removed):
     return (W1, strat1), (W2, strat2)
 
 
+def strong_parity_antichain_based(graph, start_index):
+    if (start_index == 1):
+        g, nbr_nodes = transform_graph_into_c(graph)
+        return symbolic_strong_parity_solver(g, nbr_nodes,1)
+
+    elif (start_index == 0):
+        g, nbr_nodes = transform_graph_into_c_spec(graph)
+        return symbolic_strong_parity_solver(g, nbr_nodes,0)
+
+
 def symbolic_strong_parity_solver(graph, nbr_nodes,increment):
     """
     Solves the parity game g symbolically using antichains.
@@ -357,6 +368,7 @@ def createSafetyGame(previous_graph,start_nodes, max_counter):
     """
     #overlfow node is in it by default
     queue = deque()
+    size = len(max_counter)
     #append
     #popleft
     fill = defaultdict(lambda: -1)
@@ -367,11 +379,11 @@ def createSafetyGame(previous_graph,start_nodes, max_counter):
         fill[node_safety] = 1
     while queue:
         node_safety = queue.popleft()
-        node_parity = int(node_safety[0])
+        node_parity = int(node_safety[:-size])
         g.add_node(node_safety,previous_graph.get_nodes_descriptors()[node_parity])
 
         for succ in previous_graph.get_successors(node_parity):
-            successor_safety_counter = up(node_safety[1:],previous_graph.get_node_priority(node_parity), max_counter)
+            successor_safety_counter = up(node_safety[-size:],previous_graph.get_node_priority(node_parity), max_counter)
             if (successor_safety_counter == "-"):
                 successor_safety = successor_safety_counter
             else:
@@ -417,6 +429,7 @@ def reduction_to_safety_parity_solver(graph):
     # Max counter is also a string
     max_counter = ''.join(str(x) for x in max_counter)
 
+    # Start node for construction
     start_nodes = []
     for node in graph.get_nodes():
         start_nodes.append(str(node)+"0"*nbr_counters)
@@ -429,11 +442,11 @@ def reduction_to_safety_parity_solver(graph):
 
     empty_counters = "0"*nbr_counters
     for node in W1bis:
-        if node[1:] == empty_counters:
-            W1.append(int(node[0]))
+        if node[-nbr_counters:] == empty_counters:
+            W2.append(int(node[:-nbr_counters]))
     for node in W2bis:
-        if node[1:] == empty_counters:
-            W2.append(int(node[0]))
+        if node[-nbr_counters:] == empty_counters:
+            W1.append(int(node[:-nbr_counters]))
     return W1, W2
     # We solve this safety game by computing the attractor of the nodes in overflow for player 2.
 
@@ -456,7 +469,10 @@ g.add_successor(1,2)
 g.add_predecessor(2,1)
 import tools.file_handler as io
 
-g = io.load_from_file("../assets/strong parity/example_3.txt")
+import tools.generators as gen
+g = gen.random(20,5,2,5)
+print(strong_parity_solver_no_strategies(g))
+#g = io.load_from_file("../assets/strong parity/example_3.txt")
 #return (a == [2, 1, 3, 4]) and b == {4: 4, 2: 4, 1: 2} and c == [6, 7, 5] and d == {7: 6, 6: 6, 5: 6}
 
 test = reduction_to_safety_parity_solver(g)
