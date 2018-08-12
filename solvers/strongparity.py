@@ -7,7 +7,7 @@ from antichains.library_linker import winning_region_c
 from graph import Graph
 from tools import operations as ops
 from tools.operations import transform_graph_into_c_spec, transform_generalized_graph_into_c, transform_graph_into_c
-
+import ast
 
 def strong_parity_solver(g):
     """
@@ -344,17 +344,16 @@ def up(node, priority, max_counter):
 
     if (priority % 2 == 0):
         # reset the first to 0
-        succ = (concerned_counter)*"0"+node[concerned_counter:]
+        succ = (concerned_counter)*[0]+node[concerned_counter:]
     else:
         # First value is the node so we need to offset to get the counters, if max counter we return
         if (node[concerned_counter] == max_counter[concerned_counter]):
             # The overflow node is this, its a sink
             return "-"
         else:
-            succ = node[:concerned_counter] + str(int(node[concerned_counter])+1) + node[concerned_counter+1:]
+            succ = node[:concerned_counter] + [int(node[concerned_counter])+1] + node[concerned_counter+1:]
 
     return succ
-print(up("0",2,"2"))
 
 
 def createSafetyGame(previous_graph,start_nodes, max_counter):
@@ -375,27 +374,31 @@ def createSafetyGame(previous_graph,start_nodes, max_counter):
     g = Graph()
     g.add_node("-",(0,0))
     for node_safety in start_nodes:
-        queue.append(node_safety)
-        fill[node_safety] = 1
+        queue.append(node_safety) #peut pas join ici car besoin des compteurs apres
+        node_safety_st = str(node_safety)
+        fill[node_safety_st] = 1
     while queue:
         node_safety = queue.popleft()
-        node_parity = int(node_safety[:-size])
-        g.add_node(node_safety,previous_graph.get_nodes_descriptors()[node_parity])
+        #print(start_nodes)
+        #print("NODE SAFE "+str(node_safety)+" SIZE "+str(size))
+        node_parity = int(node_safety[0])
+        node_safety_st = str(node_safety)
+        g.add_node(node_safety_st,previous_graph.get_nodes_descriptors()[node_parity])
 
         for succ in previous_graph.get_successors(node_parity):
-            successor_safety_counter = up(node_safety[-size:],previous_graph.get_node_priority(node_parity), max_counter)
+            successor_safety_counter = up(node_safety[1:],previous_graph.get_node_priority(node_parity), max_counter)
             if (successor_safety_counter == "-"):
                 successor_safety = successor_safety_counter
             else:
                 # If not the infinity sink and not already considered in the queue (this is not opti)
-                successor_safety = str(succ) + successor_safety_counter
+                successor_safety = str([succ] + successor_safety_counter)
 
                 if (fill[successor_safety] != 1):
                     fill[successor_safety] = 1
-                    queue.append(successor_safety)
+                    queue.append([succ]+successor_safety_counter)
 
-            g.add_successor(node_safety, successor_safety)
-            g.add_predecessor(successor_safety, node_safety)
+            g.add_successor(node_safety_st, successor_safety)
+            g.add_predecessor(successor_safety, node_safety_st)
     return g
 
 
@@ -403,7 +406,6 @@ def createSafetyGame(previous_graph,start_nodes, max_counter):
 def reduction_to_safety_parity_solver(graph):
     # First we find out the number of counters necessary
     maximum = -1
-
     for node in graph.get_nodes():
         if (graph.get_node_priority(node) > maximum):
             maximum = graph.get_node_priority(node)
@@ -413,13 +415,17 @@ def reduction_to_safety_parity_solver(graph):
         maxOdd = maximum
 
     nbr_counters = (maxOdd//2)+1
-
+    # print("TESTTESTSTE "+str(graph.get_node_priority(0) +graph.get_node_priority(1)))
     max_counter = [0]*nbr_counters
+    # print("MAX CVOUNTER BEFORE"+str(max_counter))
 
     for node in graph.get_nodes():
         if (graph.get_node_priority(node) % 2 != 0):
             position = graph.get_node_priority(node) // 2
+            # print("position "+str(position)+str(type(position)))
+            # print("maxcounterposition "+str(max_counter[position])+str(type(max_counter[position])))
             max_counter[position] = max_counter[position]+1
+     #print("MAX CVOUNTER AFTER" + str(max_counter))
 
     # Then we build the start counter for each node, we only build the part reachable by (v, 0, ..., 0) for all v
     # For convenience, we label the nodes as follows : (v, c_1, c_2, ..., c_d) is labeled vc_1c_2...c_d
@@ -427,26 +433,30 @@ def reduction_to_safety_parity_solver(graph):
     # This is a unique identifier for each node. The overflow is simply written "-" and added to the target set directly
 
     # Max counter is also a string
-    max_counter = ''.join(str(x) for x in max_counter)
+    #max_counter = ''.join(str(x) for x in max_counter)
 
     # Start node for construction
     start_nodes = []
     for node in graph.get_nodes():
-        start_nodes.append(str(node)+"0"*nbr_counters)
-    print("max "+str(max_counter))
+        start_nodes.append([node]+[0]*nbr_counters)
+    #print("max "+str(max_counter))
     transformed_graph = createSafetyGame(graph, start_nodes, max_counter)
 
     W1bis, W2bis = reachability.attractor(transformed_graph,["-"],1)
     W1 = []
     W2 = []
 
-    empty_counters = "0"*nbr_counters
+    empty_counters = [0]*nbr_counters
     for node in W1bis:
-        if node[-nbr_counters:] == empty_counters:
-            W2.append(int(node[:-nbr_counters]))
+        if node != "-":
+            node_list = ast.literal_eval(node)
+            if node_list[-nbr_counters:] == empty_counters:
+                W2.append(node_list[0])
     for node in W2bis:
-        if node[-nbr_counters:] == empty_counters:
-            W1.append(int(node[:-nbr_counters]))
+        if node != "-":
+            node_list = ast.literal_eval(node)
+            if node_list[-nbr_counters:] == empty_counters:
+                W1.append(node_list[0])
     return W1, W2
     # We solve this safety game by computing the attractor of the nodes in overflow for player 2.
 
