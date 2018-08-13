@@ -216,6 +216,54 @@ def random(n, p, i, o):
                 edges_added+=1
     return g
 
+def random_generalized(n, k, p, i, o):
+    """
+    This function is unfinished.
+    Generates a random game with n nodes, priorities chosen between 0 and p and out-degree of nodes between i and o.
+    No verification is made regarding whether the input makes sense (out degree larger than the number of nodes in the
+    game, etc).
+    :param n: number of nodes.
+    :param p: number of priorities.
+    :param i: min outdegree.
+    :param o: max outdegree.
+    :return: a random game graph.
+    """
+    nodes = [x for x in xrange(n)]
+    g = Graph()
+    for node in range(0, n):
+        playerpriorities = [randint(0, 1)]
+        for prio in range(0, k):
+            playerpriorities.append(randint(0, p))
+        g.add_node(node, tuple(playerpriorities))
+    # Create two partitions, S and T. Initially store all nodes in S.
+    S, T = set(nodes), set()
+
+    # Randomly select a first node, and place it in T.
+    node_s = sample(S, 1).pop()
+    S.remove(node_s)
+    T.add(node_s)
+
+    # Create a random connected graph.
+    while S:
+        # Select random node from S, and another in T.
+        node_s, node_t = sample(S, 1).pop(), sample(T, 1).pop()
+        # Create an edge between the nodes, and move the node from S to T.
+        g.add_predecessor(node_t, node_s)
+        g.add_successor(node_s, node_t)
+        S.remove(node_s)
+        T.add(node_s)
+
+    for node in range(0, n):
+        num = randint(i, o)
+        edges_added = 0
+        while edges_added < num:
+            to = choice(nodes)
+            if not (to in g.get_successors(node)):
+                g.add_successor(node, to)
+                g.add_predecessor(to, node)
+                edges_added+=1
+    return g
+
 def ladder(n):
     """
     Ladder game graphs as described in PGSolver.
@@ -271,8 +319,8 @@ print(fig56_graph.nodes)
 print("----------")
 print(test.successors)
 print(test.nodes)
+print(random_generalized(10, 3, 5, 1, 5))
 """
-
 
 
 
