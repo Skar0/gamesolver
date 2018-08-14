@@ -18,33 +18,55 @@ class Graph(object):
         self.nodes = defaultdict(tuple)
 
     def get_nodes_descriptors(self):
+        """
+        :return: the dictionary containing the node information
+        """
         return self.nodes
 
     def get_nodes(self):
+        """
+        :return: returns the list of every node in the games
+        """
         return self.nodes.keys()
 
     def get_node_player(self, node):
+        """
+        :param node: a node id
+        :return: the player to which a node belongs
+        """
         return self.nodes[node][0]
 
     def get_node_priority(self, node):
+        """
+        :param node: a node id
+        :return: the priority of the node (or the first one in case of generalized parity)
+        """
         return self.nodes[node][1]
 
-    def get_node_priority_function_i(self, node,i):
+    def get_node_priority_function_i(self, node, i):
         """
         Retrieves the priority of a node according to priority function i.
         :param node: the node id
         :param i: the priority function (1 to k)
-        :return: the priority alpha_i(node)
+        :return: the priority of the node according to priority function i
         """
         return self.nodes[node][i]
 
     def add_node(self, node, info):
+        """
+        :param node: a node id
+        :param info: a tuple (player, priority) or (player, priority_1, ..., priority_k)
+        """
         self.nodes[node] = info
 
     def remove_node(self, node):
         del self.nodes[node]
 
     def get_successors(self, node):
+        """
+        :param node: a node id
+        :return: the list of successors of the node
+        """
         return self.successors[node]
 
     def add_successor(self, node, successor):
@@ -54,6 +76,10 @@ class Graph(object):
         self.successors[node].remove(successor)
 
     def get_predecessors(self, node):
+        """
+        :param node: a node id
+        :return: the list of predecessors of the node
+        """
         return self.predecessors[node]
 
     def add_predecessor(self, node, predecessor):
@@ -64,9 +90,9 @@ class Graph(object):
 
     def subgame(self, set):
         """
-        Creates a subgame from the current game. The subgame will contain all nodes in the provided set.
-        :param set: the list of nodes that the subgame will contain.
-        :return: a subgame.
+        Creates a sub-game from the current game. The sub-game will contain all nodes in the provided set.
+        :param set: the list of nodes that the sub-game will contain.
+        :return: a sub-game.
         """
         sub = self.__class__()
         for n in set:
