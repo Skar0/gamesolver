@@ -173,7 +173,6 @@ def strong_parity_worst_case(n):
 
 def random(n, p, i, o):
     """
-    This function is unfinished.
     Generates a random game with n nodes, priorities chosen between 0 and p and out-degree of nodes between i and o.
     No verification is made regarding whether the input makes sense (out degree larger than the number of nodes in the
     game, etc).
@@ -218,11 +217,11 @@ def random(n, p, i, o):
 
 def random_generalized(n, k, p, i, o):
     """
-    This function is unfinished.
-    Generates a random game with n nodes, priorities chosen between 0 and p and out-degree of nodes between i and o.
-    No verification is made regarding whether the input makes sense (out degree larger than the number of nodes in the
-    game, etc).
+    Generates a random game with n nodes, k priority functions, priorities chosen between 0 and p and out-degree of
+    nodes between i and o. No verification is made regarding whether the input makes sense (out degree larger than
+    the number of nodes in the game, etc).
     :param n: number of nodes.
+    :param k: number of priority functions.
     :param p: number of priorities.
     :param i: min outdegree.
     :param o: max outdegree.
@@ -231,7 +230,7 @@ def random_generalized(n, k, p, i, o):
     nodes = [x for x in xrange(n)]
     g = Graph()
     for node in range(0, n):
-        playerpriorities = [randint(0, 1)]
+        playerpriorities = [randint(0, 1)] # Choose a player
         for prio in range(0, k):
             playerpriorities.append(randint(0, p))
         g.add_node(node, tuple(playerpriorities))
@@ -267,7 +266,7 @@ def random_generalized(n, k, p, i, o):
 def ladder(n):
     """
     Ladder game graphs as described in PGSolver.
-    :param n: number of nodes.
+    :param n: parameter of the ladder (2n nodes).
     :return: a ladder game graph.
     """
     g = Graph()
@@ -298,7 +297,7 @@ def opposite_priorities(g):
     """
     Takes a parity game graph and returns a generalized parity game graph which corresponds exactly to
     the same game graph except there are two priority function. The first one is the same as in g and the
-    second one is complemented.
+    second one is the complemented function.
     :param g: a parity game graph.
     :return: a generalized parity game graph.
     """
@@ -307,20 +306,3 @@ def opposite_priorities(g):
         prev = new.nodes[node] # tuple (player, priority)
         new.nodes[node] = tuple([prev[0]]+[prev[1]]+[prev[1]+1])
     return new
-
-
-"""
-import file_handler as io
-fig56_graph = io.load_from_file("../assets/strong parity/figure56.txt")
-
-test = opposite_priorities(fig56_graph)
-print(fig56_graph.successors)
-print(fig56_graph.nodes)
-print("----------")
-print(test.successors)
-print(test.nodes)
-print(random_generalized(10, 3, 5, 1, 5))
-"""
-
-
-
