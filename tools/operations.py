@@ -3,6 +3,7 @@ This module contains general-purpose functions used in several of our algorithms
 """
 import ctypes
 import collections
+
 from antichains.library_linker import createGraph_c, addEdge_c, displayGraph_c
 
 
@@ -32,11 +33,10 @@ def i_priority_node(g, i):
 
 def i_priority_node_function_j(g, i, j):
     """
-    Returns all nodes of priority i in game graph g.
-    :param j: the priority function number
     :param g: the game graph.
     :param i: the requested priority.
-    :return: a list of nodes of priority i in g.
+    :param j: the priority function.
+    :return: all nodes of priority i in game graph g according to priority function j.
     """
     nodes = g.nodes  # Nodes from g
     # get all node indexes in node tuple (index, (node_player, node_priority)) when node_priority is i
@@ -113,16 +113,26 @@ def print_solution(solution, player):
     for key, value in sigma_1.iteritems():
         print " " + str(key) + " -> " + str(value)
 
+def print_winning_regions(W1, W2):
+    """
+    Formats the solution of a game and prints it in the command line.
+    :param W1: winning region of player 0 (1)
+    :param W2: winning region of player 1 (2)
+    :return: prints formatted solution
+    """
+    print "Winning region of player 0 : " + str(W1)+"\n"
+    print "Winning region of player 1 : " + str(W2)+"\n"
 
 def transform_graph_into_c(g):
     """
     Transforms a Graph object to a graph structure in c using the c library.
+    This function assumes that nodes are numbered from 1 to n
     :param g: a game graph.
     :return: a game graph in c format and the number of nodes in that graph.
     """
     # nbr of nodes in the graph is needed by the c structure
     nbr_nodes = len(g.get_nodes())
-    # the c structure needs players (0 for player 0 and 1 for player 1) and priorities
+    # the c structure needs players (0 for player 0 and 1 for player 1) and priorities as arrays
     priorities = [0]*nbr_nodes
     players = [0]*nbr_nodes
 
@@ -137,16 +147,14 @@ def transform_graph_into_c(g):
     # adding every edge
     for node in g.get_nodes():
         for succ in g.get_successors(node):
-            #print("From "+str(node-1)+" to "+str(succ-1))
             addEdge_c(dir_graph, node-1, succ-1)
-
-    #displayGraph_c(dir_graph)
 
     return dir_graph, nbr_nodes
 
 def transform_graph_into_c_spec(g):
     """
     Transforms a Graph object to a graph structure in c using the c library.
+    This function assumes that nodes are numbered from 0 to n-1
     :param g: a game graph.
     :return: a game graph in c format and the number of nodes in that graph.
     """
@@ -156,12 +164,9 @@ def transform_graph_into_c_spec(g):
     priorities = [0]*nbr_nodes
     players = [0]*nbr_nodes
 
-    # need to create every node before creating the edges. /!\ nodes are numbered from 0 to nbr_nodes-1 in the C struct
-    #print(nbr_nodes)
-    #print(g.get_nodes())
+    # need to create every node before creating the edges.
+    # here nodes are already numbered from 0
     for node in g.get_nodes():
-        #print(node)
-        #print(g.nodes[node])
         priorities[node] = g.nodes[node][1]
         players[node] = g.nodes[node][0]
 
@@ -171,10 +176,7 @@ def transform_graph_into_c_spec(g):
     # adding every edge
     for node in g.get_nodes():
         for succ in g.get_successors(node):
-            #print("From "+str(node-1)+" to "+str(succ-1))
             addEdge_c(dir_graph, node, succ)
-
-    #displayGraph_c(dir_graph)
 
     return dir_graph, nbr_nodes
 
