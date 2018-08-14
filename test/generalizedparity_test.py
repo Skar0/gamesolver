@@ -10,6 +10,7 @@ Some examples are solved by our algorithm and we verify the solution.
 """
 The first tests only have one priority function
 """
+
 def figure56():
     """
     Solves the strong parity game from figure 5.6.
@@ -80,6 +81,10 @@ def worstcase2():
     (a,c) = gp.generalized_parity_solver(g)
     return op.are_lists_equal(a , []) and op.are_lists_equal(c , [6, 8, 9, 7, 5, 4, 0, 2, 1, 3])
 
+"""
+A few tests solved by hand
+"""
+
 def double_priority():
     """
     Solves a graph in which the priorities are twice the same.
@@ -136,6 +141,10 @@ def complementary_priorities():
     g = io.load_generalized_from_file("assets/generalized parity/complementary_priorities.txt")
     (a,c) = gp.generalized_parity_solver(g)
     return op.are_lists_equal(a , []) and op.are_lists_equal(c , [6, 3, 4, 5, 7, 1, 2])
+
+"""
+Same tests with multiple priority functions
+"""
 
 def figure56_doubled():
     """
@@ -206,6 +215,10 @@ def worstcase2_doubled():
     g = gen.multiple_priorities(io.load_generalized_from_file("assets/strong parity/worstcase_2.txt"),2)
     (a,c) = gp.generalized_parity_solver(g)
     return op.are_lists_equal(a , []) and op.are_lists_equal(c , [6, 8, 9, 7, 5, 4, 0, 2, 1, 3])
+
+"""
+Same tests with opposite priority functions
+"""
 
 def figure56_opposite():
     """
