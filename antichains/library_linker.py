@@ -89,7 +89,7 @@ def error_print(text):
 if os.uname()[0] == "Darwin":
     lib = cdll.LoadLibrary(MAIN_DIR_PATH+"game_solver.dylib")
 elif os.uname()[0] == "Linux":
-    lib = cdll.LoadLibrary("../antichains/game_solver.so")
+    lib = cdll.LoadLibrary("antichains/game_solver.so")
 else:
     error_print("OS not supported")
 
