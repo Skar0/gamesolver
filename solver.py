@@ -2,6 +2,7 @@
 import argparse
 from benchmarks import reachability_benchmark as r_bench
 from benchmarks import strongparity_benchmark as sp_bench
+from benchmarks import generalizedparity_benchmark as gp_bench
 from benchmarks import weakparity_benchmark as wp_bench
 from solvers import reachability, weakparity, strongparity, generalizedparity
 from tools import file_handler as tools
@@ -56,6 +57,10 @@ def command_line_handler():
                              dest='reachability_type', help='Benchmark the reachability algorithm')
     group_bench.add_argument('-wp', action='store', choices=['complete', 'worstcase'],
                              dest='weakparity_type', help='Benchmark the weak parity algorithm')
+    group_bench.add_argument('-sp', action='store', choices=['recursive-random', 'safety-random', 'antichain-random',
+                                                             'recursive-worstcase', 'safety-worstcase',
+                                                             'antichain-worstcase'],
+                             dest='parity_type', help='Benchmark one of the parity game algorithms')
     group_bench.add_argument('-gp', action='store_true', help='Benchmark the generalized parity algorithm')
 
     parser_benchmark.add_argument('-max', required=True, type=int, action='store', dest='max',
@@ -183,9 +188,24 @@ def solver():
                                    regression=True, order=3, path=args.outputPlot,
                                    title=u"Graphes 'pire cas' de taille 1 à " + str(max))
 
-        # Strong parity
+        # parity
+        elif args.parity_type is not None:
+            if args.parity_type == 'recursive-random':
+                sp_bench.benchmark_random(max, iterations=rep, step=step, plot=plot,path=args.outputPlot)
+            elif args.parity_type == 'safety-random':
+                sp_bench.benchmark_random_reduction(max, iterations=rep, step=step, plot=plot,path=args.outputPlot)
+            elif args.parity_type == 'antichain-random':
+                sp_bench.benchmark_random_antichain_based(max, iterations=rep, step=step, plot=plot,path=args.outputPlot)
+            elif args.parity_type == 'recursive-worstcase':
+                sp_bench.benchmark_worst_case(max, iterations=rep, step=step, plot=plot, path=args.outputPlot)
+            elif args.parity_type == 'safety-worstcase':
+                sp_bench.benchmark_worst_case_reduction(max, iterations=rep, step=step, plot=plot,path=args.outputPlot)
+            elif args.parity_type == 'antichain-worstcase':
+                sp_bench.benchmark_worst_case_antichain_based(max, iterations=rep, step=step, plot=plot,path=args.outputPlot)
+
+        # generalized parity
         else:
-            sp_bench.benchmark_worst_case(max, iterations=rep, step=step, plot=plot, path=args.outputPlot)
+            gp_bench.benchmark_random_k_functions(max,3,iterations=rep, step=step, plot=plot, path=args.outputPlot)
 
     elif args.mode == "test":
         sp_test_result = sp_test.launch_tests()
