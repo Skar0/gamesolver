@@ -119,8 +119,6 @@ def simple_example2():
     """
     g = io.load_generalized_from_file("assets/generalized parity/simple_example2.txt")
     (a,c) = gp.generalized_parity_solver(g)
-    print(a)
-    print(c)
     return op.are_lists_equal(a , [1, 2]) and op.are_lists_equal(c , [3,4,5])
 
 def simple_example3():
@@ -129,8 +127,6 @@ def simple_example3():
     """
     g = io.load_generalized_from_file("assets/generalized parity/simple_example3.txt")
     (a,c) = gp.generalized_parity_solver(g)
-    print(a)
-    print(c)
     return op.are_lists_equal(a , [1, 2, 3, 5, 6]) and op.are_lists_equal(c , [4])
 
 def complementary_priorities():
