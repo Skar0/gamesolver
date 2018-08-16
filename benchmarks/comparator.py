@@ -8,7 +8,9 @@ import solvers.weakparity as wp
 import solvers.generalizedparity as gp
 from tools.operations import transform_graph_into_c_spec, are_lists_equal,transform_graph_into_c
 
-
+"""
+This module contains functions used to compare our algorithms
+"""
 def compare_algorithms2(algo1, algo2, generator, n, preprocess1=None, preprocess2=None, iterations=3, step=10, plot=False, path="", title="Comparison", label1="Algorithm 1", label2="Algorithm2"):
     """
             Benchmarks the recursive algorithm for strong parity games using the worst case generator which yields an
@@ -62,11 +64,6 @@ def compare_algorithms2(algo1, algo2, generator, n, preprocess1=None, preprocess
         min_recording = min(temp2)
         y2.append(min_recording)  # get the minimum out of #iterations recordings
         n2.append(i)
-        #print(i)
-        #print("symb "+str(solution_symbolic[0])+" "+str(solution_symbolic[1]))
-        #print("reg  "+str(solution_regular[0])+" "+str(solution_regular[1]))
-        if ((not are_lists_equal(solution_regular[0], solution_symbolic[0])) or  (not are_lists_equal(solution_regular[1], solution_symbolic[1]))):
-            print("Problemo")
 
 
     if plot:
@@ -130,14 +127,14 @@ def compare_algorithms3(algo1, algo2, algo3, generator, n, preprocess1=None, pre
         if preprocess2 is not None:
             g2 = preprocess2(g2)
 
-        g2, nbr_nodes = transform_graph_into_c(g2)
+        g2, nbr_nodes = transform_graph_into_c_spec(g2)
 
         temp2 = []
         # #iterations calls to the solver are timed
         for j in range(iterations):
             with chrono:
                 #algo2(u[0],u[1],u[2],u[3])  # solver call
-                solution_symbolic = algo2(g2, nbr_nodes,1)
+                solution_symbolic = algo2(g2, nbr_nodes,0)
             temp2.append(chrono.interval)  # add time recording
 
         min_recording = min(temp2)
@@ -157,7 +154,6 @@ def compare_algorithms3(algo1, algo2, algo3, generator, n, preprocess1=None, pre
         y3.append(min_recording)  # get the minimum out of #iterations recordings
         n3.append(i)
 
-        print(i)
         #print("symb "+str(solution_symbolic[0])+" "+str(solution_symbolic[1]))
         #print("reg  "+str(solution_regular[0])+" "+str(solution_regular[1]))
 
@@ -376,6 +372,16 @@ compare_algorithms3(sp.strong_parity_solver_no_strategies, sp.symbolic_strong_pa
                    , step=10, plot=True, path="COMPARE3-LADDER-250n-10s-compress.pdf",
                    title="Parity game algorithms runtime comparison (ladder graphs + compression)", label1="Recursive", label2="Antichain-based", label3="Reduction to safety")
 
+# Compare strong parity recursive vs symbolic vs reuction on worst with no opti
+compare_algorithms3(sp.strong_parity_solver_no_strategies, sp.symbolic_strong_parity_solver, sp.reduction_to_safety_parity_solver,generators.strong_parity_worst_case, 20, iterations=3
+                   , step=1, plot=True, path="COMPARE3-WORST-20n-1s-noopt.pdf",
+                   title="Parity game algorithms runtime comparison (worst-case graphs)", label1="Recursive", label2="Antichain-based", label3="Reduction to safety")
+# Compare strong parity recursive vs symbolic vs reuction on worst with compression
+compare_algorithms3(sp.strong_parity_solver_no_strategies, sp.symbolic_strong_parity_solver, sp.reduction_to_safety_parity_solver,generators.strong_parity_worst_case, 20,preprocess1=optimizations.compress_priorities,preprocess2=optimizations.compress_priorities, preprocess3=optimizations.compress_priorities, iterations=3
+                   , step=1, plot=True, path="COMPARE3-WORST-20n-1s-compress.pdf",
+                   title="Parity game algorithms runtime comparison (wost-case graphs + compression)", label1="Recursive", label2="Antichain-based", label3="Reduction to safety")
+
+
 #compare_algorithms2(sp.strong_parity_solver_no_strategies, sp.symbolic_strong_parity_solver, generators.ladder, 2000, preprocess2=optimizations.compress_priorities, iterations=5
                   # , step=10, plot=True, path="sp_ladder_normalVScompressed_n2000_it5_s10.pdf",
                   # title="Recursive algorithm runtime comparison (ladder graphs)", label1="Without compression", label2="With compression")
@@ -399,33 +405,57 @@ compare_algorithms3(sp.strong_parity_solver_no_strategies, sp.symbolic_strong_pa
 compare_algorithms3(sp.strong_parity_solver_no_strategies, sp.symbolic_strong_parity_solver, sp.reduction_to_safety_parity_solver,generators.strong_parity_worst_case, 20,preprocess1=optimizations.compress_priorities,preprocess2=optimizations.compress_priorities, preprocess3=optimizations.compress_priorities,
                     iterations=3, step=1, plot=True, path="COMPARE3-WORST-20n-1s-compress.pdf",
                    title="Parity game algorithms runtime comparison (worst-case graphs + compression)", label1="Recursive", label2="Antichain-based", label3="Reduction to safety")
-"""
+
 # Compare strong vs symb with and without compression on random
 
-compare_algorithms4(sp.strong_parity_solver_no_strategies, sp.strong_parity_antichain_based,gen, 100, iterations=3
-                   , step=10, plot=True, path="COMPARE-REC-ANTI-RAND-100n-10s-noopt.pdf",
+compare_algorithms4(sp.strong_parity_solver_no_strategies, sp.strong_parity_antichain_based,gen, 350, iterations=3
+                   , step=10, plot=True, path="COMPARE-REC-ANTI-RAND-350n-10s-noopt.pdf",
                   title="Parity game algorithms runtime comparison (random graphs)", label1="Recursive", label2="Antichain-based")
-compare_algorithms4(sp.strong_parity_solver_no_strategies, sp.strong_parity_antichain_based,gen, 100, iterations=3,preprocess1=optimizations.compress_priorities,preprocess2=optimizations.compress_priorities
-                   , step=10, plot=True, path="COMPARE-REC-ANTI-RAND-100n-10s-opti.pdf",
+compare_algorithms4(sp.strong_parity_solver_no_strategies, sp.strong_parity_antichain_based,gen, 350, iterations=3,preprocess1=optimizations.compress_priorities,preprocess2=optimizations.compress_priorities
+                   , step=10, plot=True, path="COMPARE-REC-ANTI-RAND-350n-10s-opti.pdf",
                   title="Parity game algorithms runtime comparison (random graphs + compression)", label1="Recursive", label2="Antichain-based")
 
+
+# Compare strong vs symb with and without compression on ladder
+compare_algorithms4(sp.strong_parity_solver_no_strategies, sp.strong_parity_antichain_based,generators.ladder, 300, iterations=3
+                   , step=10, plot=True, path="COMPARE-REC-ANTI-LADDER-300n-10s-noopt.pdf",
+                  title="Parity game algorithms runtime comparison (ladder graphs)", label1="Recursive", label2="Antichain-based")
+compare_algorithms4(sp.strong_parity_solver_no_strategies, sp.strong_parity_antichain_based,generators.ladder, 300, iterations=3,preprocess1=optimizations.compress_priorities,preprocess2=optimizations.compress_priorities
+                   , step=10, plot=True, path="COMPARE-REC-ANTI-LADDER-300n-10s-opti.pdf",
+                  title="Parity game algorithms runtime comparison (ladder graphs + compression)", label1="Recursive", label2="Antichain-based")
+
+# Compare strong vs symb with and without compression on worst case
+compare_algorithms4(sp.strong_parity_solver_no_strategies, sp.strong_parity_antichain_based,generators.strong_parity_worst_case, 20, iterations=3
+                   , step=1, plot=True, path="COMPARE-REC-ANTI-WORST-20n-1s-noopt.pdf",
+                  title="Parity game algorithms runtime comparison (worst-case graphs)", label1="Recursive", label2="Antichain-based")
+compare_algorithms4(sp.strong_parity_solver_no_strategies, sp.strong_parity_antichain_based,generators.strong_parity_worst_case, 20, iterations=3,preprocess1=optimizations.compress_priorities,preprocess2=optimizations.compress_priorities
+                   , step=1, plot=True, path="COMPARE-REC-ANTI-WORST-20n-1s-opti.pdf",
+                  title="Parity game algorithms runtime comparison (worst-case graphs + compression)", label1="Recursive", label2="Antichain-based")
+
+
+
 # Compare reduction vs symb with and without compression
-compare_algorithms4(sp.reduction_to_safety_parity_solver, sp.strong_parity_antichain_based,gen, 20, iterations=3
-                   , step=1, plot=True, path="COMPARE-RED-ANTI-RAND-20n-1s-noopt.pdf",
+compare_algorithms4(sp.reduction_to_safety_parity_solver, sp.strong_parity_antichain_based,gen, 25, iterations=3
+                   , step=1, plot=True, path="COMPARE-RED-ANTI-RAND-25n-1s-noopt.pdf",
                   title="Parity game algorithms runtime comparison (random graphs)", label1="Reduction to safety", label2="Antichain-based")
-compare_algorithms4(sp.reduction_to_safety_parity_solver, sp.strong_parity_antichain_based,gen, 20, iterations=3,preprocess1=optimizations.compress_priorities,preprocess2=optimizations.compress_priorities
-                   , step=1, plot=True, path="COMPARE-RED-ANTI-RAND-20n-1s-opti.pdf",
+
+compare_algorithms4(sp.reduction_to_safety_parity_solver, sp.strong_parity_antichain_based,gen, 25, iterations=3,preprocess1=optimizations.compress_priorities,preprocess2=optimizations.compress_priorities
+                   , step=1, plot=True, path="COMPARE-RED-ANTI-RAND-25n-1s-opti.pdf",
                   title="Parity game algorithms runtime comparison (random graphs + compression)", label1="Reduction to safety", label2="Antichain-based")
 
 # Compare symbolic no opt vs symb with sopt
-compare_algorithms2(sp.symbolic_strong_parity_solver, sp.symbolic_strong_parity_solver,gen, 100, iterations=3
-                   , step=10, plot=True, path="COMPARE-ANTI-ANTI-RAND-100n-10s-optsvsnoopt.pdf",
+compare_algorithms2(sp.strong_parity_antichain_based, sp.strong_parity_antichain_based,gen, 350, iterations=3,preprocess2=optimizations.compress_priorities
+                   , step=10, plot=True, path="COMPARE-ANTI-ANTI-RAND-350n-10s-optsvsnoopt.pdf",
                   title="Antichain-based algorithm runtime comparison (random graphs)", label1="Without compression", label2="With compression")
 
 
 # Compare recursive no opt vs recursive with opt
-compare_algorithms(sp.strong_parity_solver_no_strategies, sp.strong_parity_solver_no_strategies,gen, 100, iterations=3,preprocess2=optimizations.compress_priorities
-                   , step=10, plot=True, path="COMPARE-REC-REC-RAND-100n-10s-optsvsnoopt.pdf",
+compare_algorithms(sp.strong_parity_solver_no_strategies, sp.strong_parity_solver_no_strategies,gen, 3000, iterations=3,preprocess2=optimizations.compress_priorities
+                   , step=10, plot=True, path="COMPARE-REC-REC-RAND-3000n-10s-optsvsnoopt.pdf",
                   title="Recursive algorithm runtime comparison (random graphs)", label1="Without compression", label2="With compression")
 
-
+# Compare recursive no opt vs recursive with opt
+compare_algorithms(sp.strong_parity_solver_no_strategies, sp.strong_parity_solver_no_strategies,generators.strong_parity_worst_case, 25, iterations=3,preprocess2=optimizations.compress_priorities
+                   , step=1, plot=True, path="COMPARE-REC-REC-WORST-25n-1s-optsvsnoopt.pdf",
+                  title="Recursive algorithm runtime comparison (worst-case graphs)", label1="Without compression", label2="With compression")
+"""
