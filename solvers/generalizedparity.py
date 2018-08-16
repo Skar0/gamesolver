@@ -25,6 +25,7 @@ def disj_parity_win2(g, maxValues, k, u):
     """
     Recursive solver for generalized parity games. Uses the algorithm presented in
     http://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-144.html
+    This is used for testing purposes.
     :param g: the game to solve
     :param maxValues: the maximum value for each priority function
     :param k: the number of priority functions
@@ -104,72 +105,53 @@ def disj_parity_win2(g, maxValues, k, u):
 
 def disj_parity_win(g, maxValues, k, u):
     """
-    Recursive solver for generalized parity games. Uses the algorithm presented in
-    http://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-144.html
+    Recursive solver for generalized parity games. Implements the classical algorithm which solves generalized parity
+    games.
     :param g: the game to solve
-    :param maxValues: the maximum value for each priority function
+    :param maxValues: the maximum value according to each priority function
     :param k: the number of priority functions
     :param u: integer for testing purposes
-    :return: W1, W2 the winning regions in the game for player 1 and player 2 (for the base game)
+    :return: W1, W2 the winning regions in the game for player 1 and player 2 (for the original game, without complement)
     """
 
     # Base case : all maxValues are 1 or the game is empty
     if all(value == 1 for value in maxValues) or len(g.nodes) == 0:
-        #print(str(u*2*" ")+"it-"+str(u)+" return on base case")
         return g.get_nodes(), []
 
 
     for i in range(k):
         attMaxOdd, compl_attMaxOdd = reachability.attractor(g, ops.i_priority_node_function_j(g, maxValues[i],i+1),0)
-        #print(str(u*2*" ")+"it-"+str(u)+" maxOdd-"+str(maxValues[i])+" attMaxOdd-"+str(attMaxOdd)+" "+"complAttMaxOdd-"+str(compl_attMaxOdd))
         G1 = g.subgame(compl_attMaxOdd)
         attMaxEven, compl_attMaxEven = reachability.attractor(G1,  ops.i_priority_node_function_j(G1, maxValues[i]-1,i+1),1)
-        #print(str(u*2*" ")+"it-"+str(u)+" maxEven-"+str(maxValues[i]-1)+" attMaxEven-"+str(attMaxEven)+" "+"complAttMaxEven-"+str(compl_attMaxEven))
         H1 = G1.subgame(compl_attMaxEven)
         j = 0
-        #print(str(u*2*" ")+"it-"+str(u)+" G\n"+str(G1))
-        #print(str(u*2*" ")+"it-"+str(u)+" H\n"+str(H1))
         while True:
-
             j+=1
             copy_maxValues = copy.copy(maxValues)
             copy_maxValues[i]-=2
             W1, W2 = disj_parity_win(H1, copy_maxValues, k,u+1)
-            #print(str(u * 2 * " ") + "it-" + str(u)+"-"+str(j) + " W1-" + str(W1) + " W2-" + str(W2))
 
-            #print("W1 "+str(W1))
-            #print("W2 "+str(W2))
-            #print("game " + str(g) + "att " + str(attMaxOdd) + "compl " + str(compl_attMaxOdd))
-            #print("stop "+str(set(W2))+" "+str(set(H1.get_nodes()))+" val "+ str(set(W2) == set(H1.get_nodes())))
-            #break
-
-            # cette cond etait en dessous de lautre et lautre prennait precedence quand on avait les 2
-            #print(len(G1.nodes))
             if len(G1.nodes) == 0:
-                #print("G empty")
                 break
 
             if set(W2) == set(H1.get_nodes()):
-                #print("hello")
                 B, compl_B = reachability.attractor(g,  G1.get_nodes(),1)
                 W1, W2 = disj_parity_win(g.subgame(compl_B), maxValues, k, u+1)
-                #print("re "+str(B)+" "+str(W1)+" "+str(W2))
                 B.extend(W2)
                 return W1, B
-            #break
+
             T, compl_T = reachability.attractor(G1, W1,0)
             G1 = G1.subgame(compl_T)
             E, compl_E = reachability.attractor(G1, ops.i_priority_node_function_j(g, maxValues[i]-1,i+1),0)
             H1 = G1.subgame(compl_E)
-            #break
-        #break
     return g.get_nodes(), []
 
 
 def generalized_parity_solver(g):
     """
-    Generalized parity games solver. This is an implementation of the algorithm presented by Chatterjee.
-    :param g: the game to solve.
+    Generalized parity games solver. This is an implementation of the classical algorithm used to solve generalized
+    parity games. This is the wrapper function which complements every priority and calls the actual algorithm.
+    :param g: the arena of the generalized parity game
     :return: the solution in the following format : W_0, W_1
     """
 
@@ -183,29 +165,26 @@ def generalized_parity_solver(g):
     # Getting the maximum value according to each priority function
     descriptors = transformed.get_nodes_descriptors()
 
+    # Get the maximal priority in the game according to every priority function.
     for node in transformed.get_nodes():
         current = descriptors[node]
         for i in range(1,nbrFunctions+1):
             if current[i] > maxValues[i-1]:
                 maxValues[i-1] = current[i]
 
-    # Max values need to be odd, if some is even, add 1
+    # Max values need to be odd, if some are even, add 1
     for i in range(0, nbrFunctions ):
         if maxValues[i] % 2 == 0:
             maxValues[i]+=1
-
-
-    #print("base graph" + str(g))
-    #print("transformed graph" + str(transformed))
-    #print("Max values" + str(maxValues))
-    #print("Nbr functions" + str(nbrFunctions))
 
     return disj_parity_win(transformed,maxValues, nbrFunctions,0)
 
 def generalized_parity_solver_nocall(g):
     """
-    Generalized parity games solver. This is an implementation of the algorithm presented by Chatterjee.
-    :param g: the game to solve.
+    Generalized parity games solver. This is an implementation of the classical algorithm used to solve generalized
+    parity games. This is the wrapper function which complements every priority but does not calls the actual algorithm.
+    This is used for benchmarking purposes
+    :param g: the arena of the generalized parity game
     :return: the solution in the following format : W_0, W_1
     """
 
@@ -230,11 +209,4 @@ def generalized_parity_solver_nocall(g):
         if maxValues[i] % 2 == 0:
             maxValues[i]+=1
 
-
-    #print("base graph" + str(g))
-    #print("transformed graph" + str(transformed))
-    #print("Max values" + str(maxValues))
-    #print("Nbr functions" + str(nbrFunctions))
-
     return transformed,maxValues, nbrFunctions,0
-
